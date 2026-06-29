@@ -67,10 +67,22 @@ export function createContainer(
   const conversationRepository = new AsyncStorageConversationRepo(storage);
   const settingsAdapter = new AsyncStorageSettingsAdapter(storage);
 
-  const modelLabel = env.aiAgentModel.split('/').pop() ?? env.aiAgentModel;
+  // Modelo por proveedor: el badge debe mostrar el del agente ACTIVO, no siempre el de
+  // chat (antes mostraba "gemma" aun con FLUX/Hunyuan seleccionado).
+  const modelByProvider: Record<AiAgentProvider, string> = {
+    ollama: env.aiAgentModel,
+    huggingface: env.aiAgentModel,
+    flux: env.imageModel,
+    krea: env.videoModel,
+    hunyuan: env.hunyuanModel,
+  };
+  const shortLabel = (model: string): string => model.split('/').pop() ?? model;
+
   const agentSelector: AgentSelector = {
     available: routingAgent.available,
-    model: modelLabel,
+    get model() {
+      return shortLabel(modelByProvider[routingAgent.selected]);
+    },
     get selected() {
       return routingAgent.selected;
     },

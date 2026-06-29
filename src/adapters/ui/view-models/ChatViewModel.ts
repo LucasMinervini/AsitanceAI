@@ -1,5 +1,6 @@
 import type { Conversation } from '@domain/entities/Conversation';
 import type { SendAssistantQuery } from '@application/use-cases/SendAssistantQuery';
+import { formatConversationAsText } from './formatConversationAsText';
 
 /** DTO de presentacion: la UI no conoce las entidades del dominio. */
 export interface ChatMessageVM {
@@ -48,6 +49,16 @@ export class ChatViewModel {
 
   getState(): ChatState {
     return this.state;
+  }
+
+  /** Texto plano de la conversación para exportar/compartir (delegado al formatter puro). */
+  exportText(): string {
+    return formatConversationAsText(this.conversation);
+  }
+
+  /** ¿Hay algo para exportar? La UI lo usa para deshabilitar el botón compartir. */
+  get hasMessages(): boolean {
+    return this.conversation.history.length > 0;
   }
 
   subscribe(listener: Listener): () => void {
