@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell($p = \"C:\\\\Users\\\\luqui\\\\OneDrive\\\\Escritorio\\\\Curso IA\\\\proyecto Final\"; \\(Get-ChildItem -LiteralPath $p -Force -Recurse -ErrorAction SilentlyContinue | Measure-Object\\).Count)",
+      "PowerShell(pnpm install 2>&1)",
+      "PowerShell(pnpm exec eslint . --format compact 2>&1 | ForEach-Object { \\($_ -split ':'\\)[0] } | Where-Object { $_ -match '\\\\S' } | Group-Object | Sort-Object Count -Descending | Select-Object -First 10 Count, Name)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(pnpm expo *)",
+      "Bash(node -e \"const p=require\\('./package.json'\\);console.log\\('expo-audio', p.dependencies['expo-audio']\\)\")",
+      "Bash(pnpm typecheck *)",
+      "Bash(pnpm lint *)",
+      "Bash(pnpm test *)",
+      "Bash(node -e \"const p=require\\('./package.json'\\);console.log\\('file-system:', p.dependencies['expo-file-system']\\);console.log\\('expo:', p.dependencies['expo']\\);\")",
+      "Bash(pnpm exec *)",
+      "mcp__visualize__read_me",
+      "PowerShell(git clone https://github.com/coleam00/context-engineering-intro.git \"C:\\\\Users\\\\luqui\\\\OneDrive\\\\Escritorio\\\\Curso IA\\\\context-engineering-intro\" 2>&1)",
+      "Bash(mkdir -p \"C:/Users/luqui/OneDrive/Escritorio/Curso IA/proyecto Final/.claude/commands\" && mkdir -p \"C:/Users/luqui/OneDrive/Escritorio/Curso IA/proyecto Final/PRPs/templates\")"
+    ]
+  }
+}
