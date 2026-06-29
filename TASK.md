@@ -9,6 +9,7 @@ _(ninguna tarea abierta en este momento)_
 - [x] Búsqueda en historial del drawer: módulo puro `filterConversations` (case/acento-insensible, full-text vía `searchText` = título + todos los mensajes) + barra de búsqueda en el `HistoryDrawer`
 - [x] Multi-conversación Fase A (selector rápido): módulo puro `buildConversationTabs` + componente `ConversationTabs` (tira de chips arriba del chat, activo resaltado + chip ＋). Fase B (registry de VMs / concurrencia en vivo) queda como follow-up
 - [x] Fix UI: empty state scrolleable (no pisa el input con el teclado abierto) + badge del selector muestra el modelo del agente ACTIVO (antes mostraba siempre el de chat aun con FLUX/Hunyuan)
+- [x] Exportar conversación: módulo puro `formatConversationAsText` + `ChatViewModel.exportText()`/`hasMessages` + botón 📤 en el header (Share nativo de RN, sin expo-sharing)
 
 ## Pendiente / Backlog
 - [ ] URL correcta para HunyuanVideo via fal-ai (slug desconocido — necesita debug con InferenceClient en Colab con HF_TOKEN)
@@ -16,7 +17,7 @@ _(ninguna tarea abierta en este momento)_
 - [x] Búsqueda en historial del drawer (filtrar conversaciones por texto)
 - [x] Soporte multi-conversación: selector rápido (Fase A). Falta Fase B (concurrencia en vivo con registry de ChatViewModels) — opcional
 - [ ] Multi-conversación Fase B: registry de ChatViewModels vivos (indicador "pensando…" en vivo entre charlas, burbuja que se actualiza sola al volver)
-- [ ] Exportar conversación (share vía expo-sharing)
+- [x] Exportar conversación (Share nativo de RN — texto plano; no se usó expo-sharing para no sumar dep nativa)
 
 ## Descubierto durante el trabajo
 _(agregar aquí sub-tareas o TODOs encontrados durante la implementación)_

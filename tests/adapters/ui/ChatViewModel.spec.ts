@@ -83,6 +83,29 @@ describe('ChatViewModel', () => {
     expect(statuses.at(-1)).toBe('idle');
   });
 
+  it('exportText() devuelve la conversación como texto plano; hasMessages refleja si hay turnos', () => {
+    const conversation = ConversationBuilder.aConversation()
+      .withTitle('Mi charla')
+      .withMessage(MessageBuilder.aMessage().withRole('user').withText('Hola').build())
+      .build();
+    const useCase = new SendAssistantQuery(
+      FakeAssistantAgent.thatReplies('hi'),
+      FakeConversationRepository.empty(),
+    );
+    const vm = new ChatViewModel(useCase, conversation);
+
+    expect(vm.hasMessages).toBe(true);
+    const text = vm.exportText();
+    expect(text).toContain('Mi charla');
+    expect(text).toContain('Tú:');
+    expect(text).toContain('Hola');
+  });
+
+  it('hasMessages es false en una conversación vacía', () => {
+    const vm = makeViewModel(FakeAssistantAgent.thatReplies('ok'));
+    expect(vm.hasMessages).toBe(false);
+  });
+
   it('ante fallo del agente queda en error y conserva la pregunta del usuario', async () => {
     const vm = makeViewModel(FakeAssistantAgent.thatIsUnavailable());
 
