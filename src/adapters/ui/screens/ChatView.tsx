@@ -29,6 +29,7 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { AgentSelector, metaFor } from '../components/AgentSelector';
 import { AiBackdrop } from '../components/AiBackdrop';
+import { ConversationTabs } from '../components/ConversationTabs';
 import { AnimatedBubble } from '../components/AnimatedBubble';
 import { ChatEmptyState } from '../components/ChatEmptyState';
 import { PressableScale } from '../components/PressableScale';
@@ -44,6 +45,10 @@ import type { ChatViewModel } from '../view-models/ChatViewModel';
 
 interface ChatViewProps {
   readonly viewModel: ChatViewModel;
+  /** Conversación abierta + callbacks para el selector rápido (tira de chips). */
+  readonly activeConversationId?: string;
+  readonly onSelectConversation: (id: string) => void;
+  readonly onNewConversation: () => void;
 }
 
 /** Extensiones que tratamos como texto legible para inyectar su contenido al prompt. */
@@ -106,11 +111,16 @@ async function fileUriToDataUrl(uri: string): Promise<string> {
 }
 
 /**
- * Renders the chat screen with message history, input controls, attachments, voice capture, and image preview.
- *
- * Displays assistant and user messages, supports sending text or attached images/files, transcribes recorded audio, and shows a full-screen lightbox for images.
+ * Parte presentacional del chat: fondo con gradiente + motivo IA con parallax.
+ * Renderiza el historial, los controles de entrada, adjuntos, captura de voz, la
+ * tira de conversaciones (selector rápido) y el lightbox de imágenes.
  */
-export function ChatView({ viewModel }: ChatViewProps) {
+export function ChatView({
+  viewModel,
+  activeConversationId,
+  onSelectConversation,
+  onNewConversation,
+}: ChatViewProps) {
   const { messages, status, error, send } = useAssistant(viewModel);
   const { transcribeAudio, agentSelector } = useDependencies();
   const [text, setText] = useState('');
@@ -288,6 +298,11 @@ export function ChatView({ viewModel }: ChatViewProps) {
         keyboardVerticalOffset={headerHeight}
       >
         <AgentSelector />
+        <ConversationTabs
+          activeId={activeConversationId}
+          onSelect={onSelectConversation}
+          onNew={onNewConversation}
+        />
 
         {isEmpty ? (
           <ChatEmptyState onPick={submit} />

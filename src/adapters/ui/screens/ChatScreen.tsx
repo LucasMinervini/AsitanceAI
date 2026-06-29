@@ -49,7 +49,12 @@ export function ChatScreen({ route, navigation }: Props) {
           <ActivityIndicator color={colors.primaryBright} />
         </View>
       ) : (
-        <ChatView viewModel={viewModel} />
+        <ChatView
+          viewModel={viewModel}
+          activeConversationId={conversationId}
+          onSelectConversation={selectConversation}
+          onNewConversation={newConversation}
+        />
       )}
 
       <HistoryDrawer

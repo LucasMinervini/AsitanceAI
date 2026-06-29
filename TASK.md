@@ -7,12 +7,14 @@ _(ninguna tarea abierta en este momento)_
 - [x] Pulido MVP de Ajustes: validación de URL de Ollama en el VM (exige esquema http(s); rechaza antes de persistir) + red de seguridad anti-brick en la pantalla de error de `App.tsx` (botón "Borrar ajustes guardados y reintentar")
 - [x] Sprint 2 (FLUX): persistir imagen generada (rol assistant) en AsyncStorage — la imagen de vision (user) sigue siendo transitoria por bloat — + texto de espera según categoría del agente ("🎨 Generando imagen…" / "🎬 Generando video…")
 - [x] Búsqueda en historial del drawer: módulo puro `filterConversations` (case/acento-insensible, full-text vía `searchText` = título + todos los mensajes) + barra de búsqueda en el `HistoryDrawer`
+- [x] Multi-conversación Fase A (selector rápido): módulo puro `buildConversationTabs` + componente `ConversationTabs` (tira de chips arriba del chat, activo resaltado + chip ＋). Fase B (registry de VMs / concurrencia en vivo) queda como follow-up
 
 ## Pendiente / Backlog
 - [ ] URL correcta para HunyuanVideo via fal-ai (slug desconocido — necesita debug con InferenceClient en Colab con HF_TOKEN)
 - [x] Pantalla de ajustes (editar API key + URL de Ollama, persiste en AsyncStorage, reinicia el container)
 - [x] Búsqueda en historial del drawer (filtrar conversaciones por texto)
-- [ ] Soporte multi-conversación simultánea (pestañas o selector rápido) ← PRÓXIMA PRIORIDAD
+- [x] Soporte multi-conversación: selector rápido (Fase A). Falta Fase B (concurrencia en vivo con registry de ChatViewModels) — opcional
+- [ ] Multi-conversación Fase B: registry de ChatViewModels vivos (indicador "pensando…" en vivo entre charlas, burbuja que se actualiza sola al volver)
 - [ ] Exportar conversación (share vía expo-sharing)
 
 ## Descubierto durante el trabajo
