@@ -11,6 +11,11 @@ export interface ConversationSummaryVM {
   readonly messageCount: number;
   /** Titulo elegido por el usuario; undefined si nunca se renombro. */
   readonly title?: string;
+  /**
+   * Texto concatenado (titulo + todos los mensajes) para busqueda full-text en el
+   * drawer. No se muestra; solo lo consume filterConversations.
+   */
+  readonly searchText?: string;
 }
 
 export type ListStatus = 'idle' | 'loading' | 'error';
@@ -90,10 +95,16 @@ export class ConversationListViewModel {
 function toSummary(conversation: Conversation): ConversationSummaryVM {
   const history = conversation.history;
   const last = history.at(-1);
+  // searchText: titulo + todos los textos, para que la busqueda encuentre una palabra
+  // que solo aparece en medio de la conversacion (no solo en el preview/titulo).
+  const searchText = [conversation.title, ...history.map((m) => m.text)]
+    .filter((s) => s !== undefined)
+    .join(' ');
   return {
     id: conversation.id.value,
     preview: last ? last.text : '(sin mensajes)',
     messageCount: history.length,
     title: conversation.title,
+    searchText,
   };
 }

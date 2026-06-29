@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useConversationList } from '../hooks/useConversationList';
+import { filterConversations } from '../view-models/filterConversations';
 import { colors, font, glow, radius, spacing } from '../theme/theme';
 
 interface HistoryDrawerProps {
@@ -34,6 +35,10 @@ export function HistoryDrawer({ visible, onClose, onSelect, onNew }: HistoryDraw
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameText, setRenameText] = useState('');
   const [deletingItem, setDeletingItem] = useState<{ id: string; label: string } | null>(null);
+  const [query, setQuery] = useState('');
+
+  const visibleItems = filterConversations(state.items, query);
+  const isSearching = query.trim().length > 0;
 
   const confirmRename = (): void => {
     if (renamingId !== null && renameText.trim().length > 0) {
@@ -52,6 +57,8 @@ export function HistoryDrawer({ visible, onClose, onSelect, onNew }: HistoryDraw
   useEffect(() => {
     if (visible) {
       void viewModel.load();
+    } else {
+      setQuery(''); // arranca limpio la proxima vez que se abre
     }
     Animated.timing(progress, {
       toValue: visible ? 1 : 0,
@@ -78,14 +85,40 @@ export function HistoryDrawer({ visible, onClose, onSelect, onNew }: HistoryDraw
           <Text style={styles.newButtonText}>+ Nueva conversación</Text>
         </Pressable>
 
+        {state.items.length > 0 ? (
+          <View style={styles.searchRow}>
+            <Text style={styles.searchIcon}>🔍</Text>
+            <TextInput
+              style={styles.searchInput}
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Buscar en el historial…"
+              placeholderTextColor={colors.textMuted}
+              autoCapitalize="none"
+              autoCorrect={false}
+              returnKeyType="search"
+            />
+            {isSearching ? (
+              <Pressable hitSlop={8} onPress={() => setQuery('')} accessibilityLabel="Limpiar búsqueda">
+                <Text style={styles.searchClear}>✕</Text>
+              </Pressable>
+            ) : null}
+          </View>
+        ) : null}
+
         {state.status === 'error' ? <Text style={styles.error}>{state.error}</Text> : null}
 
         <FlatList
-          data={state.items}
+          data={visibleItems}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
+          keyboardShouldPersistTaps="handled"
           ListEmptyComponent={
-            state.status === 'idle' ? <Text style={styles.empty}>Sin conversaciones.</Text> : null
+            state.status !== 'idle' ? null : (
+              <Text style={styles.empty}>
+                {isSearching ? `Sin resultados para "${query.trim()}".` : 'Sin conversaciones.'}
+              </Text>
+            )
           }
           renderItem={({ item }) => (
             <Pressable style={styles.row} onPress={() => onSelect(item.id)}>
@@ -229,6 +262,21 @@ const styles = StyleSheet.create({
     ...glow(colors.primary, 0.5, 12),
   },
   newButtonText: { color: colors.onPrimary, fontWeight: font.bold, fontSize: font.small },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    height: 42,
+    marginBottom: spacing.md,
+  },
+  searchIcon: { fontSize: 14 },
+  searchInput: { flex: 1, color: colors.textPrimary, fontSize: font.small, height: '100%' },
+  searchClear: { color: colors.textMuted, fontSize: font.body, fontWeight: font.bold },
   error: { color: colors.danger, marginBottom: spacing.sm },
   listContent: { gap: spacing.sm, paddingBottom: spacing.xl },
   empty: { color: colors.textMuted, textAlign: 'center', marginTop: spacing.lg },
