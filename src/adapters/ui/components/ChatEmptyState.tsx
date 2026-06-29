@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { colors, font, glow, radius, spacing } from '../theme/theme';
 
 interface ChatEmptyStateProps {
@@ -15,7 +15,12 @@ const SUGGESTIONS = [
 /** Estado inicial del chat: bienvenida + sugerencias tocables (primera impresión). */
 export function ChatEmptyState({ onPick }: ChatEmptyStateProps) {
   return (
-    <View style={styles.wrap}>
+    <ScrollView
+      style={styles.scroll}
+      contentContainerStyle={styles.wrap}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+    >
       <View style={styles.orb}>
         <Text style={styles.orbMark}>✦</Text>
       </View>
@@ -29,12 +34,21 @@ export function ChatEmptyState({ onPick }: ChatEmptyStateProps) {
           </Pressable>
         ))}
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.lg },
+  // flex:1 ocupa el espacio entre las pestañas y el input; flexGrow+center centra cuando
+  // hay lugar y deja scrollear (sin desbordar sobre el input) cuando el teclado lo comprime.
+  scroll: { flex: 1 },
+  wrap: {
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg,
+  },
   orb: {
     width: 76,
     height: 76,

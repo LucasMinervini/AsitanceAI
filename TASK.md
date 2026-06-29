@@ -8,6 +8,7 @@ _(ninguna tarea abierta en este momento)_
 - [x] Sprint 2 (FLUX): persistir imagen generada (rol assistant) en AsyncStorage — la imagen de vision (user) sigue siendo transitoria por bloat — + texto de espera según categoría del agente ("🎨 Generando imagen…" / "🎬 Generando video…")
 - [x] Búsqueda en historial del drawer: módulo puro `filterConversations` (case/acento-insensible, full-text vía `searchText` = título + todos los mensajes) + barra de búsqueda en el `HistoryDrawer`
 - [x] Multi-conversación Fase A (selector rápido): módulo puro `buildConversationTabs` + componente `ConversationTabs` (tira de chips arriba del chat, activo resaltado + chip ＋). Fase B (registry de VMs / concurrencia en vivo) queda como follow-up
+- [x] Fix UI: empty state scrolleable (no pisa el input con el teclado abierto) + badge del selector muestra el modelo del agente ACTIVO (antes mostraba siempre el de chat aun con FLUX/Hunyuan)
 
 ## Pendiente / Backlog
 - [ ] URL correcta para HunyuanVideo via fal-ai (slug desconocido — necesita debug con InferenceClient en Colab con HF_TOKEN)

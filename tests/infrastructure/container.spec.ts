@@ -58,4 +58,19 @@ describe('createContainer', () => {
     expect(container.agentSelector.available).toContain('hunyuan');
     expect(container.agentSelector.selected).toBe('ollama');
   });
+
+  it('el model del selector refleja el modelo del agente ACTIVO (no siempre el de chat)', () => {
+    const container = createContainer(env, new FakeKeyValueStorage(), noopUpload, noopDownload);
+    const { agentSelector } = container;
+
+    // Arranca en ollama → modelo de chat.
+    expect(agentSelector.model).toBe('llama3.2');
+
+    // Al cambiar de proveedor, el badge muestra el modelo de ESE agente (label corto).
+    agentSelector.select('flux');
+    expect(agentSelector.model).toBe('FLUX.1-schnell');
+
+    agentSelector.select('hunyuan');
+    expect(agentSelector.model).toBe('hunyuan-video');
+  });
 });
