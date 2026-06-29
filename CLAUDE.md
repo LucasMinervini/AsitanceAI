@@ -2,6 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Contexto y seguimiento de tareas
+
+- **Siempre leer `PLANNING.md`** al inicio de una nueva conversación para entender la arquitectura, el stack y el estado actual del proyecto.
+- **Consultar `TASK.md`** antes de empezar una tarea. Si la tarea no está listada, agregarla con fecha. Marcarla completada en cuanto termine.
+- **Workflow PRP**: para features no triviales, usar `/generate-prp INITIAL.md` (investiga + genera el PRP) y luego `/execute-prp PRPs/<feature>.md` (implementa con puertas de validación).
+
 ## Proyecto
 
 App Mobile de Asistencia IA que integra agentes de IA gratuitos. TypeScript + pnpm, diseñada con Clean Architecture y desarrollada con TDD (Spec-First). El núcleo (`domain` + `application` + adapters) se construyó y probó **sin framework** hasta tener cobertura verde; recién entonces se instaló **React Native / Expo** (Expo SDK 54, RN 0.81, React 19.1) como capa de UI. El núcleo sigue siendo independiente del framework: la lógica vive en view-models de TS puro testeables con Vitest, y RN solo renderiza.
