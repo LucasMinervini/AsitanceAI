@@ -62,8 +62,9 @@ const downloadImage: ImageDownload = async (url, prompt, headers) => {
 };
 
 /**
- * Lee los overrides de ajustes guardados por el usuario y los fusiona con la
- * configuracion de build (expoEnvSource). Los valores almacenados tienen prioridad.
+ * Builds the runtime environment from the Expo defaults and persisted user overrides.
+ *
+ * @returns The merged environment configuration.
  */
 async function buildEnv(): Promise<EnvConfig> {
   const [storedApiKey, storedOllamaUrl] = await Promise.all([
@@ -79,6 +80,11 @@ async function buildEnv(): Promise<EnvConfig> {
   });
 }
 
+/**
+ * Renders the application shell after loading fonts and environment configuration.
+ *
+ * @returns The app UI, an error screen, or `null` while initialization is in progress.
+ */
 export default function App() {
   const [fontsLoaded] = useFonts({ SpaceGrotesk_500Medium, SpaceGrotesk_700Bold });
   const [appPhase, setAppPhase] = useState<AppPhase>({ phase: 'loading' });

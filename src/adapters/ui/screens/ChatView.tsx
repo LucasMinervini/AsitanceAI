@@ -51,8 +51,10 @@ const TEXT_FILE = /\.(txt|md|markdown|json|csv|tsv|log|js|jsx|ts|tsx|py|java|c|c
 const MAX_ATTACHMENT_CHARS = 8000;
 
 /**
- * Texto de espera según la categoría del agente activo. La generación de imagen/video
- * tarda bastante más que el chat; avisarlo evita que parezca colgado.
+ * Chooses the waiting label for the active agent category.
+ *
+ * @param category - The selected agent category
+ * @returns The label to display while the agent is generating a response
  */
 function generatingLabel(category: string): string {
   if (category === 'Creación de imágenes') return '🎨 Generando imagen… puede tardar';
@@ -60,7 +62,12 @@ function generatingLabel(category: string): string {
   return 'La IA está pensando…';
 }
 
-/** Mime type del audio grabado, inferido de la extensión que produjo expo-audio. */
+/**
+ * Determines the audio MIME type for a recorded file URI.
+ *
+ * @param uri - The recorded file URI.
+ * @returns The inferred audio MIME type for `uri`.
+ */
 function mimeForUri(uri: string): string {
   if (uri.endsWith('.webm')) return 'audio/webm';
   if (uri.endsWith('.wav')) return 'audio/wav';
@@ -98,7 +105,11 @@ async function fileUriToDataUrl(uri: string): Promise<string> {
   });
 }
 
-/** Parte presentacional del chat: fondo con gradiente + motivo IA con parallax. */
+/**
+ * Renders the chat screen with message history, input controls, attachments, voice capture, and image preview.
+ *
+ * Displays assistant and user messages, supports sending text or attached images/files, transcribes recorded audio, and shows a full-screen lightbox for images.
+ */
 export function ChatView({ viewModel }: ChatViewProps) {
   const { messages, status, error, send } = useAssistant(viewModel);
   const { transcribeAudio, agentSelector } = useDependencies();

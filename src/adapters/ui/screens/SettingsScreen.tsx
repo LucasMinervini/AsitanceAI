@@ -18,6 +18,11 @@ import type { RootStackParamList } from '../navigation/types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Settings'>;
 
+/**
+ * Renders the settings screen for API and Ollama configuration.
+ *
+ * Loads persisted settings into editable fields, lets the user save changes, and triggers an app restart after a successful save. Also provides a reset action for the onboarding flow.
+ */
 export function SettingsScreen(_props: Props) {
   const { getSettings, saveSettings, restartApp, resetOnboarding } = useDependencies();
 

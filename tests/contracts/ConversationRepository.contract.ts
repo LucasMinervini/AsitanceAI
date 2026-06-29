@@ -8,9 +8,10 @@ import { MessageBuilder } from '../builders/MessageBuilder';
 import { FakeKeyValueStorage } from '../fakes/FakeKeyValueStorage';
 
 /**
- * Contrato reutilizable: TODO adaptador de ConversationRepository debe cumplirlo.
- * Cuando exista AsyncStorageConversationRepo, se invoca esta misma funcion con su
- * factory y debe pasar identico.
+ * Defines a reusable contract test suite for a ConversationRepository implementation.
+ *
+ * @param name - Label used for the generated test suite
+ * @param makeRepo - Factory that creates the repository instance under test
  */
 function conversationRepositoryContract(name: string, makeRepo: () => ConversationRepository): void {
   describe(`ConversationRepository: ${name}`, () => {

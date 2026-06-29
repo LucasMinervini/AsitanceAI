@@ -40,10 +40,13 @@ export interface Container {
 const httpFetch: FetchLike = (url, init) => fetch(url, init);
 
 /**
- * Composition Root: UNICO lugar donde se instancian las clases concretas y se
- * inyectan unas en otras. Recibe la config validada (loadEnv), el almacenamiento de
- * la plataforma (AsyncStorage en el runtime; un fake en los tests) y el uploader
- * binario para el audio (uploadAsync de expo-file-system en runtime; un fake en tests).
+ * Creates the application container and wires its concrete dependencies.
+ *
+ * @param env - Validated runtime configuration.
+ * @param storage - Key-value storage used for persistence and onboarding state.
+ * @param binaryUpload - Upload function used by audio transcription.
+ * @param imageDownload - Download function used by assistant agents.
+ * @returns The assembled application container.
  */
 export function createContainer(
   env: EnvConfig,

@@ -9,7 +9,11 @@ import type { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-/** Stack raiz: Onboarding (primera vez) → Chat; el historial vive en HistoryDrawer. */
+/**
+ * Defines the root stack navigator for onboarding, chat, and settings.
+ *
+ * Waits for the onboarding status before selecting the initial route.
+ */
 export function RootNavigator() {
   const { hasCompletedOnboarding } = useDependencies();
   const [initialRoute, setInitialRoute] = useState<'Onboarding' | 'Chat' | null>(null);
