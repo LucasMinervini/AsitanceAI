@@ -5,6 +5,8 @@ import type { DeleteConversation } from '@application/use-cases/DeleteConversati
 import type { RenameConversation } from '@application/use-cases/RenameConversation';
 import type { GetConversation } from '@application/use-cases/GetConversation';
 import type { TranscribeAudio } from '@application/use-cases/TranscribeAudio';
+import type { GetSettings } from '@application/use-cases/GetSettings';
+import type { SaveSettings } from '@application/use-cases/SaveSettings';
 
 /**
  * Dependencias que la UI necesita, expresadas en terminos de use-cases (capa
@@ -30,6 +32,11 @@ export interface UiDependencies {
   readonly agentSelector: AgentSelector;
   readonly hasCompletedOnboarding: () => Promise<boolean>;
   readonly completeOnboarding: () => Promise<void>;
+  readonly resetOnboarding: () => Promise<void>;
+  readonly getSettings: GetSettings;
+  readonly saveSettings: SaveSettings;
+  /** Recrea el container leyendo los ajustes guardados — llámalo después de SaveSettings. */
+  readonly restartApp: () => void;
 }
 
 const DependenciesContext = createContext<UiDependencies | null>(null);

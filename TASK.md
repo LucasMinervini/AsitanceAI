@@ -3,9 +3,13 @@
 ## En progreso
 _(ninguna tarea abierta en este momento)_
 
+## Completado (esta sesión)
+- [x] Pulido MVP de Ajustes: validación de URL de Ollama en el VM (exige esquema http(s); rechaza antes de persistir) + red de seguridad anti-brick en la pantalla de error de `App.tsx` (botón "Borrar ajustes guardados y reintentar")
+- [x] Sprint 2 (FLUX): persistir imagen generada (rol assistant) en AsyncStorage — la imagen de vision (user) sigue siendo transitoria por bloat — + texto de espera según categoría del agente ("🎨 Generando imagen…" / "🎬 Generando video…")
+
 ## Pendiente / Backlog
 - [ ] URL correcta para HunyuanVideo via fal-ai (slug desconocido — necesita debug con InferenceClient en Colab con HF_TOKEN)
-- [ ] Pantalla de ajustes (editar tokens, endpoints, modelo activo)
+- [x] Pantalla de ajustes (editar API key + URL de Ollama, persiste en AsyncStorage, reinicia el container)
 - [ ] Búsqueda en historial del drawer (filtrar conversaciones por texto)
 - [ ] Soporte multi-conversación simultánea (pestañas o selector rápido)
 - [ ] Exportar conversación (share vía expo-sharing)

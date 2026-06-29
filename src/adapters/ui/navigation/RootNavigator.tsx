@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ChatScreen } from '../screens/ChatScreen';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
+import { SettingsScreen } from '../screens/SettingsScreen';
 import { useDependencies } from '../di/DependenciesContext';
 import { colors, font } from '../theme/theme';
 import type { RootStackParamList } from './types';
@@ -34,6 +35,7 @@ export function RootNavigator() {
     >
       <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Chat" component={ChatScreen} options={{ title: 'Asistente IA' }} />
+      <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Ajustes' }} />
     </Stack.Navigator>
   );
 }

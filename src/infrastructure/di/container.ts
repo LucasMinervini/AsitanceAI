@@ -5,6 +5,7 @@ import {
   AsyncStorageConversationRepo,
   type KeyValueStorage,
 } from '@adapters/persistence/AsyncStorageConversationRepo';
+import { AsyncStorageSettingsAdapter } from '@adapters/persistence/AsyncStorageSettingsAdapter';
 import type { AgentSelector } from '@adapters/ui/di/DependenciesContext';
 import type { ConversationRepository } from '@application/ports/ConversationRepository';
 import { SendAssistantQuery } from '@application/use-cases/SendAssistantQuery';
@@ -13,6 +14,8 @@ import { DeleteConversation } from '@application/use-cases/DeleteConversation';
 import { GetConversation } from '@application/use-cases/GetConversation';
 import { RenameConversation } from '@application/use-cases/RenameConversation';
 import { TranscribeAudio } from '@application/use-cases/TranscribeAudio';
+import { GetSettings } from '@application/use-cases/GetSettings';
+import { SaveSettings } from '@application/use-cases/SaveSettings';
 import type { AiAgentProvider, EnvConfig } from '../config/env';
 import { createAssistantAgents } from './createAssistantAgents';
 
@@ -28,6 +31,9 @@ export interface Container {
   readonly agentSelector: AgentSelector;
   readonly hasCompletedOnboarding: () => Promise<boolean>;
   readonly completeOnboarding: () => Promise<void>;
+  readonly resetOnboarding: () => Promise<void>;
+  readonly getSettings: GetSettings;
+  readonly saveSettings: SaveSettings;
 }
 
 /** Adapta el fetch global al FetchLike del adaptador (desacopla de los tipos DOM). */
@@ -56,6 +62,7 @@ export function createContainer(
     upload: binaryUpload,
   });
   const conversationRepository = new AsyncStorageConversationRepo(storage);
+  const settingsAdapter = new AsyncStorageSettingsAdapter(storage);
 
   const modelLabel = env.aiAgentModel.split('/').pop() ?? env.aiAgentModel;
   const agentSelector: AgentSelector = {
@@ -82,5 +89,9 @@ export function createContainer(
       storage.getItem('onboarding:done').then((v) => v === '1'),
     completeOnboarding: () =>
       storage.setItem('onboarding:done', '1'),
+    resetOnboarding: () =>
+      storage.removeItem('onboarding:done'),
+    getSettings: new GetSettings(settingsAdapter),
+    saveSettings: new SaveSettings(settingsAdapter),
   };
 }

@@ -48,6 +48,28 @@ function conversationRepositoryContract(name: string, makeRepo: () => Conversati
       }
     });
 
+    it('conserva la imagen generada por el asistente (imageUrl) al guardar y recuperar', async () => {
+      const repo = makeRepo();
+      const id = ConversationId.of('conv-1');
+      const conversation = Conversation.start(id);
+      conversation.addMessage(MessageBuilder.aMessage().withText('dibujá un gato').build());
+      conversation.addMessage(
+        MessageBuilder.aMessage()
+          .withRole('assistant')
+          .withText('📷 Imagen generada')
+          .withImage('data:image/png;base64,iVBORw0KGgo=')
+          .build(),
+      );
+
+      await repo.save(conversation);
+      const found = await repo.findById(id);
+
+      expect(found.ok).toBe(true);
+      if (found.ok) {
+        expect(found.value?.history[1]?.imageUrl).toBe('data:image/png;base64,iVBORw0KGgo=');
+      }
+    });
+
     it('devuelve null al buscar un id inexistente', async () => {
       const repo = makeRepo();
 

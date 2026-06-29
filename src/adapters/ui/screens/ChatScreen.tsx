@@ -21,6 +21,11 @@ export function ChatScreen({ route, navigation }: Props) {
 
   useLayoutEffect(() => {
     navigation.setOptions({
+      headerLeft: () => (
+        <Pressable onPress={() => navigation.navigate('Settings')} hitSlop={10} style={styles.menuButton}>
+          <Text style={styles.menuIcon}>⚙️</Text>
+        </Pressable>
+      ),
       headerRight: () => (
         <Pressable onPress={() => setDrawerOpen(true)} hitSlop={10} style={styles.menuButton}>
           <Text style={styles.menuIcon}>☰</Text>
