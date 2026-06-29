@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   useFonts,
@@ -13,17 +13,13 @@ import { DependenciesProvider } from '@adapters/ui/di/DependenciesContext';
 import { RootNavigator } from '@adapters/ui/navigation/RootNavigator';
 import type { BinaryUpload, ImageDownload } from '@adapters/ai-agents/http';
 import { createContainer, type Container } from '@infrastructure/di/container';
-import { expoEnvSource, loadEnv } from '@infrastructure/config/env';
+import { expoEnvSource, loadEnv, type EnvConfig } from '@infrastructure/config/env';
 
-type Bootstrap = { ok: true; container: Container } | { ok: false; error: string };
+type AppPhase =
+  | { phase: 'loading' }
+  | { phase: 'ready'; container: Container }
+  | { phase: 'error'; message: string };
 
-/**
- * Implementación de runtime del BinaryUpload (transcripción de audio). Lee el archivo
- * local como Blob y lo sube como cuerpo crudo del POST. En RN el `fetch` con body
- * `Blob` desde un `file://` es la vía confiable para binario (a diferencia de
- * `ArrayBuffer`, que es frágil); el Content-Type lo fija el adaptador en los headers.
- * Cada etapa anota su propio error para poder diagnosticar dónde falla en el celular.
- */
 const uploadBinary: BinaryUpload = async (url, fileUri, headers) => {
   let fileBlob: Blob;
   try {
@@ -40,11 +36,6 @@ const uploadBinary: BinaryUpload = async (url, fileUri, headers) => {
   return { status: response.status, body: await response.text() };
 };
 
-/**
- * Implementación de runtime del ImageDownload (generación de imágenes FLUX). Llama
- * a la API POST de HF Inference, recibe la respuesta binaria (imagen JPEG/PNG) y la
- * convierte a data URL base64 via FileReader (disponible en el entorno de RN).
- */
 const downloadImage: ImageDownload = async (url, prompt, headers) => {
   let response: Response;
   try {
@@ -70,45 +61,89 @@ const downloadImage: ImageDownload = async (url, prompt, headers) => {
   return { status: response.status, dataUrl, body: '' };
 };
 
-function bootstrap(): Bootstrap {
-  try {
-    return {
-      ok: true,
-      container: createContainer(loadEnv(expoEnvSource()), AsyncStorage, uploadBinary, downloadImage),
-    };
-  } catch (error) {
-    return { ok: false, error: error instanceof Error ? error.message : String(error) };
-  }
+/**
+ * Builds the runtime environment from the Expo defaults and persisted user overrides.
+ *
+ * @returns The merged environment configuration.
+ */
+async function buildEnv(): Promise<EnvConfig> {
+  const [storedApiKey, storedOllamaUrl] = await Promise.all([
+    AsyncStorage.getItem('settings:apiKey'),
+    AsyncStorage.getItem('settings:ollamaBaseUrl'),
+  ]);
+  const base = expoEnvSource();
+  return loadEnv({
+    ...base,
+    ...(storedApiKey !== null ? { AI_AGENT_API_KEY: storedApiKey } : {}),
+    ...(storedApiKey !== null ? { AI_STT_API_KEY: storedApiKey } : {}),
+    ...(storedOllamaUrl !== null ? { AI_AGENT_BASE_URL: storedOllamaUrl } : {}),
+  });
 }
 
+/**
+ * Renders the application shell after loading fonts and environment configuration.
+ *
+ * @returns The app UI, an error screen, or `null` while initialization is in progress.
+ */
 export default function App() {
-  // Composition Root del runtime. Resiliente: si la config (env) es invalida, muestra
-  // el mensaje en vez de crashear con pantalla blanca.
   const [fontsLoaded] = useFonts({ SpaceGrotesk_500Medium, SpaceGrotesk_700Bold });
-  const boot = useMemo(bootstrap, []);
+  const [appPhase, setAppPhase] = useState<AppPhase>({ phase: 'loading' });
+  const [bootKey, setBootKey] = useState(0);
 
-  if (!fontsLoaded) {
+  const restartApp = useCallback(() => setBootKey((k) => k + 1), []);
+
+  // Red de seguridad anti-brick: si una config guardada invalida hace fallar loadEnv,
+  // esta es la unica via de vuelta — borra los overrides del usuario y reintenta con
+  // los defaults del build (sin reinstalar la app).
+  const resetSavedSettings = useCallback(() => {
+    Promise.all([
+      AsyncStorage.removeItem('settings:apiKey'),
+      AsyncStorage.removeItem('settings:ollamaBaseUrl'),
+    ]).finally(() => setBootKey((k) => k + 1));
+  }, []);
+
+  useEffect(() => {
+    setAppPhase({ phase: 'loading' });
+    buildEnv()
+      .then((env) => {
+        const container = createContainer(env, AsyncStorage, uploadBinary, downloadImage);
+        setAppPhase({ phase: 'ready', container });
+      })
+      .catch((error) => {
+        setAppPhase({
+          phase: 'error',
+          message: error instanceof Error ? error.message : String(error),
+        });
+      });
+  }, [bootKey]);
+
+  if (!fontsLoaded || appPhase.phase === 'loading') {
     return null;
   }
 
-  if (!boot.ok) {
+  if (appPhase.phase === 'error') {
     return (
       <SafeAreaProvider>
         <View style={styles.errorScreen}>
           <Text style={styles.errorTitle}>Error de configuración</Text>
-          <Text style={styles.errorMessage}>{boot.error}</Text>
+          <Text style={styles.errorMessage}>{appPhase.message}</Text>
           <Text style={styles.errorHint}>
-            Revisá el archivo .env (variables EXPO_PUBLIC_AI_AGENT_*) y reiniciá el servidor.
+            Revisá las variables EXPO_PUBLIC_AI_AGENT_* o los ajustes guardados en la app.
           </Text>
+          <Pressable style={styles.resetBtn} onPress={resetSavedSettings}>
+            <Text style={styles.resetBtnText}>Borrar ajustes guardados y reintentar</Text>
+          </Pressable>
         </View>
         <StatusBar style="light" />
       </SafeAreaProvider>
     );
   }
 
+  const deps = { ...appPhase.container, restartApp };
+
   return (
     <SafeAreaProvider>
-      <DependenciesProvider deps={boot.container}>
+      <DependenciesProvider deps={deps}>
         <NavigationContainer>
           <RootNavigator />
         </NavigationContainer>
@@ -129,4 +164,13 @@ const styles = StyleSheet.create({
   errorTitle: { color: '#fca5a5', fontSize: 20, fontWeight: '800' },
   errorMessage: { color: '#f1f5f9', fontSize: 14 },
   errorHint: { color: '#94a3b8', fontSize: 13 },
+  resetBtn: {
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: '#fca5a5',
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  resetBtnText: { color: '#fca5a5', fontSize: 14, fontWeight: '600' },
 });

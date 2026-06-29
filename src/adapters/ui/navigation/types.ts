@@ -2,4 +2,5 @@
 export type RootStackParamList = {
   Onboarding: undefined;
   Chat: { conversationId?: string } | undefined;
+  Settings: undefined;
 };

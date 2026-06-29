@@ -5,6 +5,7 @@ import {
   AsyncStorageConversationRepo,
   type KeyValueStorage,
 } from '@adapters/persistence/AsyncStorageConversationRepo';
+import { AsyncStorageSettingsAdapter } from '@adapters/persistence/AsyncStorageSettingsAdapter';
 import type { AgentSelector } from '@adapters/ui/di/DependenciesContext';
 import type { ConversationRepository } from '@application/ports/ConversationRepository';
 import { SendAssistantQuery } from '@application/use-cases/SendAssistantQuery';
@@ -13,6 +14,8 @@ import { DeleteConversation } from '@application/use-cases/DeleteConversation';
 import { GetConversation } from '@application/use-cases/GetConversation';
 import { RenameConversation } from '@application/use-cases/RenameConversation';
 import { TranscribeAudio } from '@application/use-cases/TranscribeAudio';
+import { GetSettings } from '@application/use-cases/GetSettings';
+import { SaveSettings } from '@application/use-cases/SaveSettings';
 import type { AiAgentProvider, EnvConfig } from '../config/env';
 import { createAssistantAgents } from './createAssistantAgents';
 
@@ -28,16 +31,22 @@ export interface Container {
   readonly agentSelector: AgentSelector;
   readonly hasCompletedOnboarding: () => Promise<boolean>;
   readonly completeOnboarding: () => Promise<void>;
+  readonly resetOnboarding: () => Promise<void>;
+  readonly getSettings: GetSettings;
+  readonly saveSettings: SaveSettings;
 }
 
 /** Adapta el fetch global al FetchLike del adaptador (desacopla de los tipos DOM). */
 const httpFetch: FetchLike = (url, init) => fetch(url, init);
 
 /**
- * Composition Root: UNICO lugar donde se instancian las clases concretas y se
- * inyectan unas en otras. Recibe la config validada (loadEnv), el almacenamiento de
- * la plataforma (AsyncStorage en el runtime; un fake en los tests) y el uploader
- * binario para el audio (uploadAsync de expo-file-system en runtime; un fake en tests).
+ * Creates the application container and wires its concrete dependencies.
+ *
+ * @param env - Validated runtime configuration.
+ * @param storage - Key-value storage used for persistence and onboarding state.
+ * @param binaryUpload - Upload function used by audio transcription.
+ * @param imageDownload - Download function used by assistant agents.
+ * @returns The assembled application container.
  */
 export function createContainer(
   env: EnvConfig,
@@ -56,6 +65,7 @@ export function createContainer(
     upload: binaryUpload,
   });
   const conversationRepository = new AsyncStorageConversationRepo(storage);
+  const settingsAdapter = new AsyncStorageSettingsAdapter(storage);
 
   const modelLabel = env.aiAgentModel.split('/').pop() ?? env.aiAgentModel;
   const agentSelector: AgentSelector = {
@@ -82,5 +92,9 @@ export function createContainer(
       storage.getItem('onboarding:done').then((v) => v === '1'),
     completeOnboarding: () =>
       storage.setItem('onboarding:done', '1'),
+    resetOnboarding: () =>
+      storage.removeItem('onboarding:done'),
+    getSettings: new GetSettings(settingsAdapter),
+    saveSettings: new SaveSettings(settingsAdapter),
   };
 }

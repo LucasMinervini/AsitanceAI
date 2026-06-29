@@ -29,6 +29,9 @@ const PersistedConversation = z.object({
       role: z.enum(['user', 'assistant']),
       text: z.string().min(1),
       createdAt: z.string().optional(),
+      // Solo se guarda para mensajes del asistente (imagen generada = entregable).
+      // La imagen que sube el usuario (vision) es transitoria y no se persiste.
+      imageUrl: z.string().optional(),
     }),
   ),
 });
@@ -52,6 +55,8 @@ export class AsyncStorageConversationRepo implements ConversationRepository {
         role: message.role,
         text: message.text,
         createdAt: message.createdAt.toISOString(),
+        // Persistir la imagen solo si la generó el asistente; descartar las de vision.
+        imageUrl: message.role === 'assistant' ? message.imageUrl : undefined,
       })),
     };
 
@@ -137,6 +142,7 @@ export class AsyncStorageConversationRepo implements ConversationRepository {
           role: message.role,
           text: message.text,
           createdAt: message.createdAt !== undefined ? new Date(message.createdAt) : undefined,
+          imageUrl: message.imageUrl,
         }),
       );
     }

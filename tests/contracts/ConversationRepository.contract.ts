@@ -8,9 +8,10 @@ import { MessageBuilder } from '../builders/MessageBuilder';
 import { FakeKeyValueStorage } from '../fakes/FakeKeyValueStorage';
 
 /**
- * Contrato reutilizable: TODO adaptador de ConversationRepository debe cumplirlo.
- * Cuando exista AsyncStorageConversationRepo, se invoca esta misma funcion con su
- * factory y debe pasar identico.
+ * Defines a reusable contract test suite for a ConversationRepository implementation.
+ *
+ * @param name - Label used for the generated test suite
+ * @param makeRepo - Factory that creates the repository instance under test
  */
 function conversationRepositoryContract(name: string, makeRepo: () => ConversationRepository): void {
   describe(`ConversationRepository: ${name}`, () => {
@@ -45,6 +46,28 @@ function conversationRepositoryContract(name: string, makeRepo: () => Conversati
       expect(found.ok).toBe(true);
       if (found.ok) {
         expect(found.value?.title).toBe('Plan de viaje');
+      }
+    });
+
+    it('conserva la imagen generada por el asistente (imageUrl) al guardar y recuperar', async () => {
+      const repo = makeRepo();
+      const id = ConversationId.of('conv-1');
+      const conversation = Conversation.start(id);
+      conversation.addMessage(MessageBuilder.aMessage().withText('dibujá un gato').build());
+      conversation.addMessage(
+        MessageBuilder.aMessage()
+          .withRole('assistant')
+          .withText('📷 Imagen generada')
+          .withImage('data:image/png;base64,iVBORw0KGgo=')
+          .build(),
+      );
+
+      await repo.save(conversation);
+      const found = await repo.findById(id);
+
+      expect(found.ok).toBe(true);
+      if (found.ok) {
+        expect(found.value?.history[1]?.imageUrl).toBe('data:image/png;base64,iVBORw0KGgo=');
       }
     });
 

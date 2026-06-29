@@ -27,7 +27,7 @@ import {
   useAudioRecorder,
 } from 'expo-audio';
 import * as ImagePicker from 'expo-image-picker';
-import { AgentSelector } from '../components/AgentSelector';
+import { AgentSelector, metaFor } from '../components/AgentSelector';
 import { AiBackdrop } from '../components/AiBackdrop';
 import { AnimatedBubble } from '../components/AnimatedBubble';
 import { ChatEmptyState } from '../components/ChatEmptyState';
@@ -50,7 +50,24 @@ interface ChatViewProps {
 const TEXT_FILE = /\.(txt|md|markdown|json|csv|tsv|log|js|jsx|ts|tsx|py|java|c|cpp|cs|go|rb|php|html|css|xml|ya?ml|ini|sh)$/i;
 const MAX_ATTACHMENT_CHARS = 8000;
 
-/** Mime type del audio grabado, inferido de la extensión que produjo expo-audio. */
+/**
+ * Chooses the waiting label for the active agent category.
+ *
+ * @param category - The selected agent category
+ * @returns The label to display while the agent is generating a response
+ */
+function generatingLabel(category: string): string {
+  if (category === 'Creación de imágenes') return '🎨 Generando imagen… puede tardar';
+  if (category === 'Video') return '🎬 Generando video… esto tarda un poco';
+  return 'La IA está pensando…';
+}
+
+/**
+ * Determines the audio MIME type for a recorded file URI.
+ *
+ * @param uri - The recorded file URI.
+ * @returns The inferred audio MIME type for `uri`.
+ */
 function mimeForUri(uri: string): string {
   if (uri.endsWith('.webm')) return 'audio/webm';
   if (uri.endsWith('.wav')) return 'audio/wav';
@@ -88,10 +105,14 @@ async function fileUriToDataUrl(uri: string): Promise<string> {
   });
 }
 
-/** Parte presentacional del chat: fondo con gradiente + motivo IA con parallax. */
+/**
+ * Renders the chat screen with message history, input controls, attachments, voice capture, and image preview.
+ *
+ * Displays assistant and user messages, supports sending text or attached images/files, transcribes recorded audio, and shows a full-screen lightbox for images.
+ */
 export function ChatView({ viewModel }: ChatViewProps) {
   const { messages, status, error, send } = useAssistant(viewModel);
-  const { transcribeAudio } = useDependencies();
+  const { transcribeAudio, agentSelector } = useDependencies();
   const [text, setText] = useState('');
   const [scrollOffset, setScrollOffset] = useState(0);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
@@ -241,10 +262,13 @@ export function ChatView({ viewModel }: ChatViewProps) {
     setTimeout(() => setCopiedIndex((current) => (current === index ? null : current)), 1500);
   };
 
+  // Categoría del agente activo: define el texto de espera (chat vs. imagen vs. video).
+  // Leído en render; al enviar, el provider ya está fijado por el selector.
+  const thinkingLabel = generatingLabel(metaFor(agentSelector.selected).category);
   const thinking = (
     <AnimatedBubble style={[styles.bubble, styles.assistantBubble, styles.thinkingBubble]}>
       <ActivityIndicator size="small" color={colors.primaryBright} />
-      <Text style={styles.thinkingText}>La IA está pensando…</Text>
+      <Text style={styles.thinkingText}>{thinkingLabel}</Text>
     </AnimatedBubble>
   );
 

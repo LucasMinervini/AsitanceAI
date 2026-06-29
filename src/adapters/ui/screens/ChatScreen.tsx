@@ -10,9 +10,7 @@ import type { RootStackParamList } from '../navigation/types';
 type Props = NativeStackScreenProps<RootStackParamList, 'Chat'>;
 
 /**
- * Wrapper de navegacion del chat: construye el view-model segun el conversationId del
- * route y monta el menu lateral de historial (abrible con ☰). Seleccionar/crear una
- * conversacion actualiza el param -> el hook reconstruye el view-model.
+ * Renders the chat screen for the current conversation and its history drawer.
  */
 export function ChatScreen({ route, navigation }: Props) {
   const conversationId = route.params?.conversationId;
@@ -21,6 +19,11 @@ export function ChatScreen({ route, navigation }: Props) {
 
   useLayoutEffect(() => {
     navigation.setOptions({
+      headerLeft: () => (
+        <Pressable onPress={() => navigation.navigate('Settings')} hitSlop={10} style={styles.menuButton}>
+          <Text style={styles.menuIcon}>⚙️</Text>
+        </Pressable>
+      ),
       headerRight: () => (
         <Pressable onPress={() => setDrawerOpen(true)} hitSlop={10} style={styles.menuButton}>
           <Text style={styles.menuIcon}>☰</Text>
