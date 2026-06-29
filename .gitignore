@@ -13,3 +13,6 @@ web-build/
 *.orig.*
 .expo-shared/
 expo-env.d.ts
+
+# Claude Code local settings (can contain secrets)
+.claude/settings.local.json
