@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useConversationList } from '../hooks/useConversationList';
+import { useDependencies } from '../di/DependenciesContext';
 import { filterConversations } from '../view-models/filterConversations';
 import { colors, font, glow, radius, spacing } from '../theme/theme';
 
@@ -29,6 +30,7 @@ interface HistoryDrawerProps {
  */
 export function HistoryDrawer({ visible, onClose, onSelect, onNew }: HistoryDrawerProps) {
   const { state, viewModel } = useConversationList();
+  const { chatViewModelRegistry } = useDependencies();
   const { width } = useWindowDimensions();
   const panelWidth = Math.min(340, width * 0.84);
   const progress = useRef(new Animated.Value(0)).current;
@@ -49,6 +51,7 @@ export function HistoryDrawer({ visible, onClose, onSelect, onNew }: HistoryDraw
 
   const confirmDelete = (): void => {
     if (deletingItem !== null) {
+      chatViewModelRegistry.evict(deletingItem.id); // descarta el VM vivo de la charla borrada
       void viewModel.remove(deletingItem.id);
     }
     setDeletingItem(null);

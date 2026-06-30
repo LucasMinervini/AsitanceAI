@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -10,6 +10,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { DependenciesProvider } from '@adapters/ui/di/DependenciesContext';
+import { ChatViewModelRegistry } from '@adapters/ui/registry/ChatViewModelRegistry';
 import { RootNavigator } from '@adapters/ui/navigation/RootNavigator';
 import type { BinaryUpload, ImageDownload } from '@adapters/ai-agents/http';
 import { createContainer, type Container } from '@infrastructure/di/container';
@@ -117,6 +118,19 @@ export default function App() {
       });
   }, [bootKey]);
 
+  // Registry de ChatViewModels vivos (Fase B): se recrea solo cuando cambia el container
+  // (ej. tras guardar ajustes y reiniciar), no en cada cambio de conversación.
+  const chatViewModelRegistry = useMemo(
+    () =>
+      appPhase.phase === 'ready'
+        ? new ChatViewModelRegistry(
+            appPhase.container.sendAssistantQuery,
+            appPhase.container.getConversation,
+          )
+        : null,
+    [appPhase],
+  );
+
   if (!fontsLoaded || appPhase.phase === 'loading') {
     return null;
   }
@@ -139,7 +153,11 @@ export default function App() {
     );
   }
 
-  const deps = { ...appPhase.container, restartApp };
+  if (chatViewModelRegistry === null) {
+    return null; // inalcanzable en 'ready'; satisface el tipo no-nullable de deps
+  }
+
+  const deps = { ...appPhase.container, restartApp, chatViewModelRegistry };
 
   return (
     <SafeAreaProvider>
