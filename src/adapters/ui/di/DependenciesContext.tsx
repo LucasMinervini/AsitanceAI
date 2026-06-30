@@ -7,6 +7,7 @@ import type { GetConversation } from '@application/use-cases/GetConversation';
 import type { TranscribeAudio } from '@application/use-cases/TranscribeAudio';
 import type { GetSettings } from '@application/use-cases/GetSettings';
 import type { SaveSettings } from '@application/use-cases/SaveSettings';
+import type { ChatViewModelRegistry } from '../registry/ChatViewModelRegistry';
 
 /**
  * Dependencias que la UI necesita, expresadas en terminos de use-cases (capa
@@ -37,6 +38,8 @@ export interface UiDependencies {
   readonly saveSettings: SaveSettings;
   /** Recrea el container leyendo los ajustes guardados — llámalo después de SaveSettings. */
   readonly restartApp: () => void;
+  /** Mantiene vivos los ChatViewModel por conversación (concurrencia en vivo, Fase B). */
+  readonly chatViewModelRegistry: ChatViewModelRegistry;
 }
 
 const DependenciesContext = createContext<UiDependencies | null>(null);
