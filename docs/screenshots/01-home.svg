@@ -1,0 +1,73 @@
+<svg width="300" height="620" viewBox="0 0 300 620" xmlns="http://www.w3.org/2000/svg" font-family="Verdana, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="0.5" stop-color="#1e1b4b"/>
+      <stop offset="1" stop-color="#0f172a"/>
+    </linearGradient>
+    <radialGradient id="orb" cx="0.5" cy="0.4" r="0.6">
+      <stop offset="0" stop-color="#818cf8"/>
+      <stop offset="1" stop-color="#6366f1"/>
+    </radialGradient>
+    <clipPath id="screen"><rect x="8" y="8" width="284" height="604" rx="30"/></clipPath>
+  </defs>
+
+  <rect x="2" y="2" width="296" height="616" rx="36" fill="#000" opacity="0.5"/>
+  <rect x="4" y="4" width="292" height="612" rx="34" fill="#020617"/>
+  <g clip-path="url(#screen)">
+    <rect x="8" y="8" width="284" height="604" fill="url(#bg)"/>
+    <circle cx="60" cy="120" r="80" fill="#6366f1" opacity="0.10"/>
+    <circle cx="250" cy="380" r="100" fill="#22d3ee" opacity="0.07"/>
+
+    <!-- status bar -->
+    <text x="28" y="34" fill="#f1f5f9" font-size="12" font-weight="bold">3:50</text>
+    <text x="250" y="34" fill="#f1f5f9" font-size="11">📶 🔋</text>
+
+    <!-- header -->
+    <circle cx="32" cy="62" r="15" fill="rgba(255,255,255,0.06)" stroke="rgba(165,180,252,0.22)"/>
+    <text x="32" y="67" fill="#f1f5f9" font-size="13" text-anchor="middle">⚙️</text>
+    <text x="150" y="67" fill="#f1f5f9" font-size="15" font-weight="bold" text-anchor="middle">Asistente IA</text>
+    <text x="268" y="67" fill="#f1f5f9" font-size="15" text-anchor="middle">☰</text>
+
+    <!-- agent selector pill -->
+    <rect x="24" y="86" width="150" height="30" rx="15" fill="rgba(255,255,255,0.06)" stroke="#818cf8"/>
+    <circle cx="40" cy="101" r="4" fill="#22d3ee"/>
+    <text x="52" y="105" fill="#f1f5f9" font-size="11">🍌 Nano Banana ▾</text>
+    <text x="276" y="105" fill="#94a3b8" font-size="9" text-anchor="end">FLUX.1-schnell</text>
+
+    <!-- conversation tabs -->
+    <rect x="24" y="124" width="74" height="24" rx="12" fill="rgba(99,102,241,0.16)" stroke="#818cf8"/>
+    <text x="61" y="140" fill="#f1f5f9" font-size="9.5" text-anchor="middle">Nueva charla</text>
+    <rect x="104" y="124" width="74" height="24" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(165,180,252,0.22)"/>
+    <text x="141" y="140" fill="#94a3b8" font-size="9.5" text-anchor="middle">Plan de viaje</text>
+    <rect x="184" y="124" width="60" height="24" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(165,180,252,0.22)"/>
+    <text x="214" y="140" fill="#94a3b8" font-size="9.5" text-anchor="middle">Recetas</text>
+    <circle cx="262" cy="136" r="13" fill="rgba(255,255,255,0.06)" stroke="#818cf8"/>
+    <text x="262" y="141" fill="#818cf8" font-size="14" text-anchor="middle">＋</text>
+
+    <!-- empty state -->
+    <circle cx="150" cy="250" r="34" fill="url(#orb)"/>
+    <text x="150" y="262" fill="#fff" font-size="28" text-anchor="middle">✦</text>
+    <text x="150" y="320" fill="#f1f5f9" font-size="19" font-weight="bold" text-anchor="middle">¿En qué te ayudo?</text>
+    <text x="150" y="342" fill="#94a3b8" font-size="11" text-anchor="middle">Elegí una idea o escribí abajo.</text>
+
+    <rect x="40" y="362" width="220" height="38" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(165,180,252,0.22)"/>
+    <text x="150" y="386" fill="#c7d2fe" font-size="11.5" font-weight="bold" text-anchor="middle">Armame un plan de viaje de 3 días</text>
+    <rect x="40" y="408" width="220" height="38" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(165,180,252,0.22)"/>
+    <text x="150" y="432" fill="#c7d2fe" font-size="11.5" font-weight="bold" text-anchor="middle">Explicame un concepto difícil</text>
+    <rect x="40" y="454" width="220" height="38" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(165,180,252,0.22)"/>
+    <text x="150" y="478" fill="#c7d2fe" font-size="11.5" font-weight="bold" text-anchor="middle">Dame una receta rápida y rica</text>
+
+    <!-- input row -->
+    <rect x="22" y="556" width="36" height="40" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(165,180,252,0.22)"/>
+    <text x="40" y="581" font-size="15" text-anchor="middle">📎</text>
+    <rect x="62" y="556" width="36" height="40" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(165,180,252,0.22)"/>
+    <text x="80" y="581" font-size="15" text-anchor="middle">📷</text>
+    <rect x="102" y="556" width="92" height="40" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(165,180,252,0.22)"/>
+    <text x="114" y="581" fill="#94a3b8" font-size="10">Escribí…</text>
+    <rect x="198" y="556" width="36" height="40" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(165,180,252,0.22)"/>
+    <text x="216" y="581" font-size="15" text-anchor="middle">🎤</text>
+    <rect x="238" y="556" width="44" height="40" rx="12" fill="#6366f1"/>
+    <text x="260" y="581" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">Enviar</text>
+  </g>
+</svg>
