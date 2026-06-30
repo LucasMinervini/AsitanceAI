@@ -1,0 +1,56 @@
+<svg width="300" height="620" viewBox="0 0 300 620" xmlns="http://www.w3.org/2000/svg" font-family="Verdana, sans-serif">
+  <defs>
+    <linearGradient id="bg4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="0.5" stop-color="#1e1b4b"/>
+      <stop offset="1" stop-color="#0f172a"/>
+    </linearGradient>
+    <clipPath id="screen4"><rect x="8" y="8" width="284" height="604" rx="30"/></clipPath>
+  </defs>
+
+  <rect x="2" y="2" width="296" height="616" rx="36" fill="#000" opacity="0.5"/>
+  <rect x="4" y="4" width="292" height="612" rx="34" fill="#020617"/>
+  <g clip-path="url(#screen4)">
+    <rect x="8" y="8" width="284" height="604" fill="url(#bg4)"/>
+    <!-- dimmed chat behind -->
+    <rect x="8" y="8" width="284" height="604" fill="#000" opacity="0.4"/>
+
+    <!-- drawer panel (right) -->
+    <rect x="68" y="8" width="224" height="604" fill="#0f1430" opacity="0.96"/>
+    <rect x="68" y="8" width="224" height="604" fill="rgba(30,27,75,0.55)"/>
+    <line x1="68" y1="8" x2="68" y2="612" stroke="rgba(165,180,252,0.22)"/>
+
+    <text x="84" y="52" fill="#f1f5f9" font-size="17" font-weight="bold">Historial</text>
+
+    <!-- new conversation -->
+    <rect x="84" y="66" width="192" height="34" rx="12" fill="#6366f1"/>
+    <text x="180" y="88" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">+ Nueva conversación</text>
+
+    <!-- search bar -->
+    <rect x="84" y="110" width="192" height="34" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(165,180,252,0.22)"/>
+    <text x="96" y="132" font-size="11">🔍</text>
+    <text x="116" y="131" fill="#f1f5f9" font-size="11">vuelo</text>
+    <text x="264" y="132" fill="#94a3b8" font-size="12" text-anchor="middle">✕</text>
+
+    <!-- result rows -->
+    <rect x="84" y="156" width="192" height="50" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(165,180,252,0.22)"/>
+    <text x="96" y="178" fill="#f1f5f9" font-size="11" font-weight="bold">Plan de viaje</text>
+    <text x="96" y="194" fill="#94a3b8" font-size="8.5">8 mensajes</text>
+    <text x="218" y="180" fill="#22d3ee" font-size="9" font-weight="bold">Renombrar</text>
+    <text x="232" y="196" fill="#fca5a5" font-size="9" font-weight="bold">Borrar</text>
+
+    <rect x="84" y="214" width="192" height="50" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(165,180,252,0.22)"/>
+    <text x="96" y="236" fill="#f1f5f9" font-size="11" font-weight="bold">Vuelos a Madrid</text>
+    <text x="96" y="252" fill="#94a3b8" font-size="8.5">3 mensajes</text>
+    <text x="218" y="238" fill="#22d3ee" font-size="9" font-weight="bold">Renombrar</text>
+    <text x="232" y="254" fill="#fca5a5" font-size="9" font-weight="bold">Borrar</text>
+
+    <!-- hint about full-text -->
+    <text x="180" y="296" fill="#94a3b8" font-size="9" text-anchor="middle" font-style="italic">Busca en título + todos los mensajes</text>
+    <text x="180" y="310" fill="#94a3b8" font-size="9" text-anchor="middle" font-style="italic">(case- y acento-insensible)</text>
+
+    <!-- chat peeking on the left -->
+    <text x="30" y="40" fill="#cbd5e1" font-size="11" opacity="0.6">☰</text>
+    <rect x="16" y="120" width="44" height="20" rx="10" fill="rgba(99,102,241,0.25)"/>
+  </g>
+</svg>

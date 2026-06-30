@@ -1,0 +1,71 @@
+<svg width="300" height="620" viewBox="0 0 300 620" xmlns="http://www.w3.org/2000/svg" font-family="Verdana, sans-serif">
+  <defs>
+    <linearGradient id="bg5" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="0.5" stop-color="#1e1b4b"/>
+      <stop offset="1" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="art" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f59e0b"/>
+      <stop offset="0.5" stop-color="#ec4899"/>
+      <stop offset="1" stop-color="#6366f1"/>
+    </linearGradient>
+    <clipPath id="screen5"><rect x="8" y="8" width="284" height="604" rx="30"/></clipPath>
+    <clipPath id="imgclip"><rect x="38" y="232" width="180" height="135" rx="10"/></clipPath>
+  </defs>
+
+  <rect x="2" y="2" width="296" height="616" rx="36" fill="#000" opacity="0.5"/>
+  <rect x="4" y="4" width="292" height="612" rx="34" fill="#020617"/>
+  <g clip-path="url(#screen5)">
+    <rect x="8" y="8" width="284" height="604" fill="url(#bg5)"/>
+    <circle cx="240" cy="140" r="90" fill="#ec4899" opacity="0.08"/>
+
+    <text x="28" y="34" fill="#f1f5f9" font-size="12" font-weight="bold">3:50</text>
+    <text x="250" y="34" fill="#f1f5f9" font-size="11">📶 🔋</text>
+    <text x="32" y="67" fill="#f1f5f9" font-size="13" text-anchor="middle">⚙️</text>
+    <text x="150" y="67" fill="#f1f5f9" font-size="15" font-weight="bold" text-anchor="middle">Asistente IA</text>
+    <text x="272" y="67" fill="#f1f5f9" font-size="15" text-anchor="middle">☰</text>
+
+    <!-- agent pill: Nano Banana -->
+    <rect x="24" y="84" width="140" height="28" rx="14" fill="rgba(255,255,255,0.06)" stroke="#818cf8"/>
+    <circle cx="40" cy="98" r="4" fill="#22d3ee"/>
+    <text x="52" y="102" fill="#f1f5f9" font-size="10.5">🍌 Nano Banana ▾</text>
+    <text x="276" y="102" fill="#94a3b8" font-size="9" text-anchor="end">FLUX.1-schnell</text>
+
+    <!-- user prompt -->
+    <rect x="96" y="132" width="180" height="34" rx="14" fill="#6366f1"/>
+    <text x="110" y="153" fill="#fff" font-size="11">Un zorro astronauta, neón</text>
+
+    <!-- assistant image bubble -->
+    <rect x="24" y="182" width="208" height="210" rx="14" fill="rgba(255,255,255,0.08)" stroke="rgba(165,180,252,0.22)"/>
+    <g clip-path="url(#imgclip)">
+      <rect x="38" y="232" width="180" height="135" fill="url(#art)"/>
+      <circle cx="95" cy="280" r="26" fill="#fff" opacity="0.85"/>
+      <circle cx="88" cy="274" r="4" fill="#1e1b4b"/>
+      <circle cx="104" cy="274" r="4" fill="#1e1b4b"/>
+      <path d="M82 290 q13 10 26 0" stroke="#1e1b4b" stroke-width="2" fill="none"/>
+      <rect x="150" y="250" width="50" height="80" rx="8" fill="#fff" opacity="0.25"/>
+      <text x="170" y="355" font-size="20" text-anchor="middle">🚀</text>
+    </g>
+    <text x="38" y="216" fill="#f1f5f9" font-size="11">📷 Imagen generada</text>
+    <text x="38" y="384" fill="#94a3b8" font-size="8">15:48</text>
+    <text x="214" y="384" fill="#22d3ee" font-size="8" text-anchor="end">Copiar</text>
+
+    <!-- generating hint bubble -->
+    <rect x="24" y="406" width="186" height="32" rx="14" fill="rgba(255,255,255,0.08)" stroke="rgba(165,180,252,0.22)"/>
+    <circle cx="42" cy="422" r="5" fill="none" stroke="#818cf8" stroke-width="2" stroke-dasharray="20 8"/>
+    <text x="56" y="426" fill="#c7d2fe" font-size="10">🎨 Generando imagen…</text>
+
+    <!-- input row -->
+    <rect x="22" y="556" width="36" height="40" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(165,180,252,0.22)"/>
+    <text x="40" y="581" font-size="15" text-anchor="middle">📎</text>
+    <rect x="62" y="556" width="36" height="40" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(165,180,252,0.22)"/>
+    <text x="80" y="581" font-size="15" text-anchor="middle">📷</text>
+    <rect x="102" y="556" width="92" height="40" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(165,180,252,0.22)"/>
+    <text x="114" y="581" fill="#94a3b8" font-size="10">Escribí…</text>
+    <rect x="198" y="556" width="36" height="40" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(165,180,252,0.22)"/>
+    <text x="216" y="581" font-size="15" text-anchor="middle">🎤</text>
+    <rect x="238" y="556" width="44" height="40" rx="12" fill="#6366f1"/>
+    <text x="260" y="581" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">Enviar</text>
+  </g>
+</svg>

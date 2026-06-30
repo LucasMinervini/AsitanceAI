@@ -1,13 +1,14 @@
 # 🤖 Mobile AI Assistance
 
-> App móvil de **asistencia con IA**: un chat que conversa con **agentes de IA gratuitos** (Ollama local o HuggingFace), con adjuntar archivos, fotos y **notas de voz transcritas**. Construida con **Clean Architecture** y **TDD (Spec-First)** sobre **TypeScript + React Native / Expo**.
+> Asistente de IA para el celular que conversa con **agentes gratuitos** (Ollama local · HuggingFace), **genera imágenes** (FLUX) y **video** (Krea · HunyuanVideo), **ve** tus fotos, **transcribe** notas de voz y **comparte** conversaciones. Construido con **Clean Architecture** y **TDD (Spec-First)** sobre **TypeScript + React Native / Expo**.
 
 <p align="center">
   <img alt="Expo SDK 54" src="https://img.shields.io/badge/Expo-SDK%2054-000020?logo=expo&logoColor=white">
   <img alt="React Native" src="https://img.shields.io/badge/React%20Native-0.81-61DAFB?logo=react&logoColor=black">
+  <img alt="React" src="https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white">
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white">
   <img alt="pnpm" src="https://img.shields.io/badge/pnpm-9.x-F69220?logo=pnpm&logoColor=white">
-  <img alt="Tests" src="https://img.shields.io/badge/tests-105%20passing-3FB950?logo=vitest&logoColor=white">
+  <img alt="Tests" src="https://img.shields.io/badge/tests-162%20passing-3FB950?logo=vitest&logoColor=white">
   <img alt="Arquitectura" src="https://img.shields.io/badge/Clean%20Architecture-TDD-7c3aed">
 </p>
 
@@ -15,33 +16,54 @@
 
 ## 💡 La idea
 
-Un asistente de IA en el celular que **no depende de APIs pagas**: podés conectarlo a un **Ollama** corriendo en tu máquina (100% local y gratis) o a **HuggingFace** con un token gratuito. El proveedor se elige **en runtime** desde la propia UI, y todos los agentes se comportan igual gracias a un contrato compartido.
+Un asistente de IA en el celular que **no depende de APIs pagas**: conectalo a un **Ollama** corriendo en tu máquina (100% local y gratis) o a **HuggingFace** con un token gratuito, y sumá agentes de **generación de imagen y video**. El proveedor se elige **en runtime** desde la propia UI y todos los agentes se comportan igual gracias a un **contrato compartido**.
 
-El foco técnico es la **arquitectura**: el núcleo de negocio (dominio + casos de uso) se construyó y testeó **sin framework** hasta tener cobertura verde; recién entonces se le puso React Native encima como una simple capa de render. La lógica de UI vive en *view-models* de TS puro testeables, no en los componentes.
-
----
-
-## ✨ Características
-
-- 💬 **Chat con IA** con historial persistente (AsyncStorage).
-- 🔀 **Selector de proveedor en runtime** — Ollama ⇄ HuggingFace sin reiniciar.
-- ⚡ **Envío optimista** — tu mensaje aparece al instante + "La IA está pensando…".
-- 📎 **Adjuntar archivos** — los de texto se inyectan al prompt; los binarios van por referencia.
-- 📷 **Cámara** — sacá una foto y adjuntala (con miniatura en el chip).
-- 🎤 **Notas de voz** — graba, **transcribe con Whisper** (HuggingFace) y **manda solo**.
-- 👁️ **Visión** — el agente multimodal (gemma-3) **ve** las fotos que mandás (no solo el nombre).
-- 🗂️ **Historial lateral** translúcido (drawer con efecto vidrio) — **renombrar** y **borrar** conversaciones.
-- 🎨 **Tema visual** propio — gradientes, glow, tipografía display y animaciones one-shot.
+El foco técnico es la **arquitectura**: el núcleo de negocio (dominio + casos de uso) se construyó y testeó **sin framework** hasta tener cobertura verde; recién entonces se le puso React Native encima como una simple capa de render. La lógica de UI vive en *view-models* de TS puro **testeables con Vitest**, no en los componentes.
 
 ---
 
 ## 📸 Capturas
 
-> Guardá tus capturas en [`docs/img/`](docs/img/) con estos nombres (se obtienen directo del celular o con `pnpm web` en viewport mobile). Podés sumar más a la tabla cuando quieras (ej. `historial.png`, `voz.png`).
+<p align="center">
+  <img src="docs/screenshots/01-home.svg" width="190" alt="Inicio / selector rápido">
+  <img src="docs/screenshots/02-conversation.svg" width="190" alt="Conversación">
+  <img src="docs/screenshots/03-agent-selector.svg" width="190" alt="Selector de agentes">
+</p>
+<p align="center">
+  <img src="docs/screenshots/05-image-gen.svg" width="190" alt="Generación de imagen (FLUX)">
+  <img src="docs/screenshots/04-drawer-search.svg" width="190" alt="Historial + búsqueda">
+</p>
 
-| Inicio (selector de agente) | Conversación |
-|:---:|:---:|
-| ![Inicio](docs/img/home.png) | ![Chat](docs/img/chat.png) |
+<p align="center"><sub>Mockups del diseño real (paleta, gradiente y componentes del proyecto). Reemplazá por capturas del dispositivo cuando quieras — mismo path <code>docs/screenshots/</code>.</sub></p>
+
+---
+
+## ✨ Características
+
+#### 🧠 Agentes (elegís en runtime, todos gratuitos)
+- 💬 **Chat** — **Ollama** (local, sin internet) y **HuggingFace** (cloud, multimodal).
+- 🎨 **Generación de imágenes** — **FLUX.1-schnell** ("Nano Banana"), texto → imagen.
+- 🎬 **Generación de video** — **Krea** (Colab/ngrok) y **HunyuanVideo-1.5** (fal-ai).
+- 👁️ **Visión** — el agente multimodal **ve** las fotos que mandás (no solo el nombre).
+- 🎤 **Transcripción de voz** — **Whisper** en HuggingFace; grabás y se manda el texto.
+
+#### 💬 Experiencia de chat
+- ⚡ **Envío optimista** — tu mensaje aparece al instante + "La IA está pensando…" (o "🎨 Generando imagen…" según el agente).
+- 📎 **Adjuntos** — los de texto se inyectan al prompt; los binarios van por referencia.
+- 📷 **Cámara** — sacá una foto y mandala al modelo de visión (con miniatura + lightbox).
+- 🖼️ **Imágenes en la burbuja** — foto subida o imagen generada, con visor a pantalla completa.
+
+#### 🗂️ Gestión de conversaciones
+- 🔀 **Selector rápido** — tira de chips arriba del chat para saltar entre charlas + ＋ nueva.
+- 🧵 **Concurrencia en vivo** — disparás una generación en una charla, te vas a otra y al volver ves su estado real (sigue trabajando en segundo plano).
+- 🔎 **Búsqueda full-text** en el historial (case- y acento-insensible, busca dentro de los mensajes).
+- ✏️ **Renombrar / borrar** conversaciones; 📤 **exportar/compartir** como texto plano.
+- 🗂️ **Historial lateral** translúcido (drawer con efecto vidrio).
+
+#### ⚙️ Configuración y robustez
+- 🔧 **Pantalla de Ajustes** — editá el token de HuggingFace y la URL de Ollama desde la app (persisten y reinician el container).
+- 🛟 **Red de seguridad anti-brick** — si una config inválida rompe el arranque, un botón borra los ajustes guardados y reintenta.
+- 🎨 **Tema visual** propio — gradientes, glow, tipografía display (Space Grotesk) y animaciones one-shot.
 
 ---
 
@@ -51,13 +73,13 @@ El foco técnico es la **arquitectura**: el núcleo de negocio (dominio + casos 
 
 ```mermaid
 flowchart LR
-    subgraph UI["🖼️ infrastructure / adapters-ui"]
-      RN["React Native / Expo<br/>(solo render)"]
+    subgraph INFRA["🏗️ infrastructure"]
+      APPX["App.tsx (Composition Root)<br/>config/env · di/container"]
     end
     subgraph ADP["🔌 adapters"]
-      AG["ai-agents<br/>(Ollama, HuggingFace, Whisper)"]
-      PER["persistence<br/>(AsyncStorage)"]
-      VM["ui/view-models<br/>(TS puro, testeable)"]
+      AG["ai-agents<br/>Ollama · HuggingFace · FLUX<br/>Krea · Hunyuan · Whisper"]
+      PER["persistence<br/>AsyncStorage · InMemory"]
+      UI["ui<br/>components · view-models · hooks"]
     end
     subgraph APP["⚙️ application"]
       UC["use-cases"]
@@ -67,7 +89,7 @@ flowchart LR
       ENT["entities + value-objects<br/>(lógica pura, sin I/O)"]
     end
 
-    UI --> ADP --> APP --> DOM
+    INFRA --> ADP --> APP --> DOM
     AG -. implementa .-> PO
     PER -. implementa .-> PO
 ```
@@ -82,6 +104,10 @@ flowchart LR
 
 **Convención de errores:** el **dominio lanza** (`throw`) subclases de `DomainError` para violar invariantes; **application y adapters devuelven `Result<T, E>`** — así el camino de error queda en la firma del tipo.
 
+**Agentes intercambiables:** `createAssistantAgents` arma un `Record<AiAgentProvider, AssistantAgentPort>` exhaustivo y `RoutingAssistantAgent` enruta al proveedor activo, cambiable en runtime con `select()`. Un mismo **contrato** (`*.contract.ts`) corre contra cada adapter para garantizar que todos cumplen el Port igual.
+
+**UI sin estado en los componentes:** la lógica vive en *view-models* de TS puro con patrón store (`getState()` + `subscribe()`); los hooks de React solo los conectan con `useSyncExternalStore`. Un `ChatViewModelRegistry` mantiene vivas las instancias por conversación para la concurrencia en vivo.
+
 ### Estructura de carpetas
 
 ```
@@ -89,11 +115,11 @@ src/
 ├── domain/              # entities/ + value-objects/  (núcleo puro)
 ├── application/         # use-cases/ + ports/
 ├── adapters/
-│   ├── ai-agents/       # Ollama, HuggingFace, Whisper (STT), routing, http
-│   ├── persistence/     # InMemory + AsyncStorage repos
-│   └── ui/              # components/ screens/ view-models/ hooks/ navigation/ theme/ di/
+│   ├── ai-agents/       # Ollama, HuggingFace, FLUX/video, Whisper, routing, http
+│   ├── persistence/     # InMemory + AsyncStorage (conversaciones y settings)
+│   └── ui/              # components/ screens/ view-models/ hooks/ registry/ navigation/ theme/ di/
 ├── infrastructure/      # app/ config/ di/  (Composition Root)
-└── shared/              # result/ errors/ utils/
+└── shared/              # result/ errors/
 tests/                   # domain/ application/ contracts/ infrastructure/ adapters/ + builders/ fakes/
 ```
 
@@ -112,7 +138,7 @@ corepack enable                          # una vez (en Windows puede requerir ad
 corepack prepare pnpm@9.12.0 --activate
 pnpm install                             # instalar dependencias (node-linker=isolated)
 cp .env.example .env                     # configurar (ver tabla de variables abajo)
-pnpm start                               # Metro / dev server
+pnpm start                               # Metro / dev server (incluye --clear)
 ```
 
 Luego escaneá el QR con **Expo Go**, o:
@@ -122,6 +148,8 @@ pnpm web                         # abrir en el navegador
 pnpm android | pnpm ios          # emulador / simulador
 ```
 
+> 💡 También podés configurar el token de HuggingFace y la URL de Ollama **desde la propia app** (pantalla de Ajustes, botón ⚙️), sin tocar el `.env`.
+
 ### 🌐 URLs locales
 | Qué | URL |
 |---|---|
@@ -129,7 +157,7 @@ pnpm android | pnpm ios          # emulador / simulador
 | Bundle web (`pnpm web`) | `http://localhost:8081` |
 | Ollama local (si lo usás como proveedor) | `http://localhost:11434/api` |
 
-> **Windows + OneDrive:** si Metro falla con `EINVAL: readlink` por la caché incremental, usá `pnpm start` (ya incluye `--clear`).
+> **Windows + OneDrive:** si Metro falla con `EINVAL: readlink` por la caché incremental, `pnpm start` ya incluye `--clear`.
 
 ---
 
@@ -139,15 +167,17 @@ Copiá [`.env.example`](.env.example) → `.env`. En el runtime de Expo se leen 
 
 | Variable | Default | Descripción |
 |---|---|---|
-| `AI_AGENT_PROVIDER` | `ollama` | `ollama` (local) \| `huggingface` |
-| `AI_AGENT_BASE_URL` | — | Endpoint del agente (ej. `https://router.huggingface.co/v1`) |
-| `AI_AGENT_MODEL` | — | Modelo (ej. `google/gemma-3-12b-it`) |
-| `AI_AGENT_API_KEY` | — | Token HF (**requerido** si `provider=huggingface`) |
-| `AI_STT_BASE_URL` | `https://router.huggingface.co/hf-inference/models` | Endpoint de transcripción (Whisper) |
-| `AI_STT_MODEL` | `openai/whisper-large-v3` | Modelo de transcripción |
+| `AI_AGENT_PROVIDER` | `ollama` | `ollama` · `huggingface` · `flux` · `krea` · `hunyuan` |
+| `AI_AGENT_BASE_URL` | `http://localhost:11434/api` | Endpoint del agente de chat / base |
+| `AI_AGENT_MODEL` | `llama3.2` | Modelo de chat (ej. `google/gemma-3-12b-it`) |
+| `AI_AGENT_API_KEY` | — | Token HF (**requerido** si el proveedor es `huggingface`/`flux`/`hunyuan`) |
+| `AI_IMAGE_BASE_URL` / `AI_IMAGE_MODEL` | router HF · `black-forest-labs/FLUX.1-schnell` | Generación de imágenes |
+| `AI_VIDEO_BASE_URL` / `AI_VIDEO_MODEL` | router HF · `krea/krea-realtime-video` | Generación de video (Krea, Colab/ngrok) |
+| `AI_HUNYUAN_BASE_URL` / `AI_HUNYUAN_MODEL` | router fal-ai · `hunyuan-video` | HunyuanVideo |
+| `AI_STT_BASE_URL` / `AI_STT_MODEL` | router HF · `openai/whisper-large-v3` | Transcripción (Whisper) |
 | `AI_STT_API_KEY` | (cae al token del agente) | Token HF para STT, opcional |
 
-La validación es con **Zod** en `config/env.ts`: falla rápido si la config es inválida y exige `AI_AGENT_API_KEY` cuando el proveedor es HuggingFace. Las claves se leen **solo** ahí; nunca se hardcodean.
+La validación es con **Zod** en `config/env.ts`: falla rápido si la config es inválida y exige `AI_AGENT_API_KEY` cuando el proveedor lo necesita. Las claves se leen **solo** ahí; nunca se hardcodean.
 
 ---
 
@@ -171,7 +201,7 @@ pnpm exec vitest run tests/domain/Conversation.spec.ts
 pnpm exec vitest run -t "no permite agregar mensajes a una conversacion cerrada"
 ```
 
-**79 tests** en verde. Los tests espejan las capas: `domain/` (unitarios), `application/` (aceptación con Fakes de los Ports), `contracts/` (un mismo `*.contract.ts` corre contra cada adapter), `infrastructure/` (Composition Root), `adapters/` (view-models). Los datos de prueba se crean con **Test Data Builders** y los Ports se doblan con **Fakes** reutilizables.
+**162 tests** en verde. Los tests espejan las capas: `domain/` (unitarios), `application/` (aceptación con Fakes de los Ports), `contracts/` (un mismo `*.contract.ts` corre contra cada adapter), `infrastructure/` (Composition Root), `adapters/` (view-models y módulos puros: `filterConversations`, `buildConversationTabs`, `formatConversationAsText`, `ChatViewModelRegistry`…). Los datos de prueba se crean con **Test Data Builders** y los Ports se doblan con **Fakes** reutilizables.
 
 ---
 
@@ -190,19 +220,18 @@ pnpm exec vitest run -t "no permite agregar mensajes a una conversacion cerrada"
 
 ## 🛠️ Stack
 
-**TypeScript** · **React Native 0.81 / Expo SDK 54 / React 19** · **React Navigation** · **AsyncStorage** · **Zod** (validación de DTOs/env) · **Vitest** (+ coverage v8) · **ESLint / Prettier** · **pnpm** (`node-linker=isolated`, anti-dependencias-fantasma).
-Expo plugins / módulos: `expo-audio` (grabación), `expo-image-picker` (cámara), `expo-document-picker`, `expo-clipboard`, `expo-blur`, `expo-linear-gradient`, `expo-font`.
+**TypeScript** · **React Native 0.81 / Expo SDK 54 / React 19** · **React Navigation** (native-stack) · **AsyncStorage** · **Zod** (validación de DTOs/env) · **Vitest** (+ coverage v8) · **ESLint / Prettier** · **pnpm** (`node-linker=isolated`, anti-dependencias-fantasma).
+
+Módulos Expo: `expo-audio` (grabación), `expo-image-picker` (cámara), `expo-document-picker`, `expo-clipboard`, `expo-blur`, `expo-linear-gradient`, `expo-font`. Para compartir se usa el **`Share` nativo de React Native** (sin sumar `expo-sharing`).
 
 ---
 
-## 🗺️ Estado y próximos pasos
+## 🗺️ Estado
 
-✅ Chat · selector de proveedor · adjuntos · cámara · notas de voz con transcripción · **visión** · envío optimista · animaciones.
+✅ Chat (Ollama/HF) · generación de imagen (FLUX) y video (Krea/Hunyuan) · visión · transcripción de voz · adjuntos · cámara · envío optimista · selector rápido + concurrencia en vivo · búsqueda · renombrar/borrar/exportar · pantalla de ajustes · animaciones.
 
-Pendientes:
-- 🔎 **Búsqueda** de conversaciones en el historial.
-- ✅ Confirmación de borrado.
+Pendiente:
+- 🎥 URL correcta de **HunyuanVideo** vía fal-ai (requiere descubrir el slug con `InferenceClient` en Colab con `HF_TOKEN`).
+- 🗃️ Persistir imágenes generadas en **FileSystem** (hoy base64 en AsyncStorage; deuda anotada).
 
-> Para detalles finos de implementación y decisiones de Expo, ver [`CLAUDE.md`](CLAUDE.md).
-#   A s i t a n c e A I  
- 
+> Para detalles finos de implementación y decisiones de Expo, ver [`CLAUDE.md`](CLAUDE.md) · [`PLANNING.md`](PLANNING.md) · [`TASK.md`](TASK.md).
