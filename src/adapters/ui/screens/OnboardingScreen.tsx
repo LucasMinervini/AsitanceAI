@@ -10,6 +10,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDependencies } from '../di/DependenciesContext';
 import { metaFor } from '../components/AgentSelector';
+import { ScreenBackground } from '../components/ScreenBackground';
 import { colors, font, glow, radius, spacing } from '../theme/theme';
 import type { RootStackParamList } from '../navigation/types';
 
@@ -44,6 +45,8 @@ export function OnboardingScreen({ navigation }: Props) {
 
   return (
     <View style={[styles.root, { paddingTop: insets.top, paddingBottom: Math.max(insets.bottom, spacing.xl) }]}>
+      <ScreenBackground />
+
       {/* ── Indicador de pasos ── */}
       <View style={styles.dots}>
         {STEPS.map((s) => (

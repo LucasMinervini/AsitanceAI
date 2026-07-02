@@ -11,6 +11,8 @@ _(ninguna tarea abierta en este momento)_
 - [x] Fix UI: empty state scrolleable (no pisa el input con el teclado abierto) + badge del selector muestra el modelo del agente ACTIVO (antes mostraba siempre el de chat aun con FLUX/Hunyuan)
 - [x] Exportar conversación: módulo puro `formatConversationAsText` + `ChatViewModel.exportText()`/`hasMessages` + botón 📤 en el header (Share nativo de RN, sin expo-sharing)
 - [x] Multi-conversación Fase B: `ChatViewModelRegistry` (VMs vivos por id, estado en vivo al volver; envíos en segundo plano siguen) + wire en DI/`useChatViewModel` + evict al borrar
+- [x] Pulido UI: sugerencias del empty state adaptadas a la categoría del agente activo (`suggestionsFor`: imagen/video/chat) + `AgentSelector.onChange` → `ChatView` reacciona en vivo al cambiar de agente
+- [x] Pulido UI: fondo unificado (`ScreenBackground` = gradiente + `AiBackdrop`) en Onboarding y Ajustes, para cohesión con el Chat
 
 ## Pendiente / Backlog
 - [ ] URL correcta para HunyuanVideo via fal-ai (slug desconocido — necesita debug con InferenceClient en Colab con HF_TOKEN)

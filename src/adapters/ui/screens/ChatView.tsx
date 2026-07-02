@@ -41,6 +41,7 @@ import {
   type Attachment,
 } from '../view-models/composeAttachmentMessage';
 import { buildChatRows, type ChatRow } from '../view-models/chatRows';
+import { suggestionsFor } from '../view-models/agentSuggestions';
 import type { ChatViewModel } from '../view-models/ChatViewModel';
 
 interface ChatViewProps {
@@ -123,6 +124,10 @@ export function ChatView({
 }: ChatViewProps) {
   const { messages, status, error, send } = useAssistant(viewModel);
   const { transcribeAudio, agentSelector } = useDependencies();
+  // Proveedor activo en estado local para que las sugerencias y el label de generación
+  // reaccionen al cambiar de agente estando en esta pantalla (el selector lo notifica).
+  const [activeProvider, setActiveProvider] = useState(agentSelector.selected);
+  const activeCategory = metaFor(activeProvider).category;
   const [text, setText] = useState('');
   const [scrollOffset, setScrollOffset] = useState(0);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
@@ -273,8 +278,7 @@ export function ChatView({
   };
 
   // Categoría del agente activo: define el texto de espera (chat vs. imagen vs. video).
-  // Leído en render; al enviar, el provider ya está fijado por el selector.
-  const thinkingLabel = generatingLabel(metaFor(agentSelector.selected).category);
+  const thinkingLabel = generatingLabel(activeCategory);
   const thinking = (
     <AnimatedBubble style={[styles.bubble, styles.assistantBubble, styles.thinkingBubble]}>
       <ActivityIndicator size="small" color={colors.primaryBright} />
@@ -297,7 +301,7 @@ export function ChatView({
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={headerHeight}
       >
-        <AgentSelector />
+        <AgentSelector onChange={setActiveProvider} />
         <ConversationTabs
           activeId={activeConversationId}
           onSelect={onSelectConversation}
@@ -305,7 +309,7 @@ export function ChatView({
         />
 
         {isEmpty ? (
-          <ChatEmptyState onPick={submit} />
+          <ChatEmptyState onPick={submit} suggestions={suggestionsFor(activeCategory)} />
         ) : (
           <FlatList
             ref={listRef}

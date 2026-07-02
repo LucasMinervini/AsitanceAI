@@ -1,19 +1,16 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { colors, font, glow, radius, spacing } from '../theme/theme';
+import { suggestionsFor } from '../view-models/agentSuggestions';
 
 interface ChatEmptyStateProps {
   /** Envía la sugerencia elegida como mensaje. */
   readonly onPick: (text: string) => void;
+  /** Sugerencias a mostrar (dependen del agente activo). Default: prompts de chat. */
+  readonly suggestions?: readonly string[];
 }
 
-const SUGGESTIONS = [
-  'Armame un plan de viaje de 3 días',
-  'Explicame un concepto difícil',
-  'Dame una receta rápida y rica',
-];
-
 /** Estado inicial del chat: bienvenida + sugerencias tocables (primera impresión). */
-export function ChatEmptyState({ onPick }: ChatEmptyStateProps) {
+export function ChatEmptyState({ onPick, suggestions = suggestionsFor('Chat') }: ChatEmptyStateProps) {
   return (
     <ScrollView
       style={styles.scroll}
@@ -28,7 +25,7 @@ export function ChatEmptyState({ onPick }: ChatEmptyStateProps) {
       <Text style={styles.sub}>Elegí una idea o escribí tu mensaje abajo.</Text>
 
       <View style={styles.chips}>
-        {SUGGESTIONS.map((suggestion) => (
+        {suggestions.map((suggestion) => (
           <Pressable key={suggestion} style={styles.chip} onPress={() => onPick(suggestion)}>
             <Text style={styles.chipText}>{suggestion}</Text>
           </Pressable>

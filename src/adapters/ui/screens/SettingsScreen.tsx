@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDependencies } from '../di/DependenciesContext';
+import { ScreenBackground } from '../components/ScreenBackground';
 import { SettingsViewModel } from '../view-models/SettingsViewModel';
 import { colors, font, glow, radius, spacing } from '../theme/theme';
 import type { RootStackParamList } from '../navigation/types';
@@ -69,6 +70,7 @@ export function SettingsScreen(_props: Props) {
       style={styles.root}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
+      <ScreenBackground />
       <ScrollView
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
