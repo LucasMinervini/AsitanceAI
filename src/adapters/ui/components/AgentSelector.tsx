@@ -61,7 +61,12 @@ export const metaFor = (provider: string): AgentMeta =>
  * agrupados por categoría. Agregar un agente: (1) añadir a AiAgentProvider +
  * adapter + DI wiring, (2) sumar la entrada en AGENT_META con su category.
  */
-export function AgentSelector() {
+interface AgentSelectorProps {
+  /** Notifica el proveedor recién elegido (para que el padre reaccione, ej. sugerencias). */
+  readonly onChange?: (provider: string) => void;
+}
+
+export function AgentSelector({ onChange }: AgentSelectorProps = {}) {
   const { agentSelector } = useDependencies();
   const [selected, setSelected] = useState(agentSelector.selected);
   const [open, setOpen] = useState(false);
@@ -69,6 +74,7 @@ export function AgentSelector() {
   const choose = (provider: string): void => {
     setSelected(provider);
     agentSelector.select(provider);
+    onChange?.(provider);
     setOpen(false);
   };
 

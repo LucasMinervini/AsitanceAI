@@ -11,9 +11,19 @@ _(ninguna tarea abierta en este momento)_
 - [x] Fix UI: empty state scrolleable (no pisa el input con el teclado abierto) + badge del selector muestra el modelo del agente ACTIVO (antes mostraba siempre el de chat aun con FLUX/Hunyuan)
 - [x] Exportar conversación: módulo puro `formatConversationAsText` + `ChatViewModel.exportText()`/`hasMessages` + botón 📤 en el header (Share nativo de RN, sin expo-sharing)
 - [x] Multi-conversación Fase B: `ChatViewModelRegistry` (VMs vivos por id, estado en vivo al volver; envíos en segundo plano siguen) + wire en DI/`useChatViewModel` + evict al borrar
+- [x] Pulido UI: sugerencias del empty state adaptadas a la categoría del agente activo (`suggestionsFor`: imagen/video/chat) + `AgentSelector.onChange` → `ChatView` reacciona en vivo al cambiar de agente
+- [x] Pulido UI: fondo unificado (`ScreenBackground` = gradiente + `AiBackdrop`) en Onboarding y Ajustes, para cohesión con el Chat
+- [x] Pulido UI: vida en las burbujas — `TypingDots` (indicador "escribiendo…" con loop acotado) en la burbuja "pensando" + entrada con spring/pop en `AnimatedBubble`
+- [x] Pulido UI: micro-feedbacks — botón "Copiar" con `PressableScale` + color al confirmar (`copyDone`); FAB ↓ entra con `PopIn` (fade+scale one-shot) y `PressableScale` al tocar
+- [x] Pulido UI: feedback al enviar — entrada direccional de burbujas (`AnimatedBubble` prop `from`): mensaje del usuario desde la derecha, respuesta de la IA desde la izquierda (el botón Enviar ya tenía press-scale)
+- [x] Pulido UI: auto-scroll de la tira de conversaciones al chip activo (mide cada chip con `onLayout`, `scrollTo` al cambiar la charla activa / cargar la lista)
+- [x] Multimodal — slice de video (core): `VideoGenerator` port + tipos + `VideoUnavailableError` + transporte `VideoInference` + `WanVideoAdapter` (fal-ai) + contrato + use-case `GenerateVideo` + `FakeVideoGenerator` + `GeneratedVideoBuilder`. `INITIAL.md` con la spec multimodal.
+- [x] Multimodal — routing + DI de video: `RoutingVideoGenerator` (genérico) + `createVideoGenerators` (record exhaustivo `VideoModelId` = wan/hunyuan/animatediff) + env (`falVideoBaseUrl`/`wanModel`/`animateDiffModel`) + wiring en `container` (`generateVideo` + `videoSelector`) + `VideoInference` runtime en `App.tsx` (POST + `extractVideoUrl`). Falta solo la UI (reproducción con expo-video).
 
 ## Pendiente / Backlog
-- [ ] URL correcta para HunyuanVideo via fal-ai (slug desconocido — necesita debug con InferenceClient en Colab con HF_TOKEN)
+- [ ] Multimodal video — pulido: ajustar `extractVideoUrl`/poll al ver la respuesta real de fal-ai (Krea/Hunyuan van por ese provider; requiere token con Inference Providers + billing); slice TTS (`SpeechSynthesizer`) e Image-to-Text (`ImageAnalyzer`) siguiendo el mismo patrón.
+- [ ] Multimodal — slices TTS (`SpeechSynthesizer`) e Image-to-Text (`ImageAnalyzer`) siguiendo el mismo patrón (port + adapter + contrato + fake).
+- [ ] URL/slug correcto para Krea/HunyuanVideo via fal-ai (confirmar en Colab: `krea/Krea-2-Turbo` va por `router.huggingface.co/fal-ai`; requiere token HF con permiso Inference Providers + billing)
 - [x] Pantalla de ajustes (editar API key + URL de Ollama, persiste en AsyncStorage, reinicia el container)
 - [x] Búsqueda en historial del drawer (filtrar conversaciones por texto)
 - [x] Soporte multi-conversación: selector rápido (Fase A). Falta Fase B (concurrencia en vivo con registry de ChatViewModels) — opcional

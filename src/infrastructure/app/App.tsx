@@ -12,7 +12,7 @@ import { StatusBar } from 'expo-status-bar';
 import { DependenciesProvider } from '@adapters/ui/di/DependenciesContext';
 import { ChatViewModelRegistry } from '@adapters/ui/registry/ChatViewModelRegistry';
 import { RootNavigator } from '@adapters/ui/navigation/RootNavigator';
-import type { BinaryUpload, ImageDownload } from '@adapters/ai-agents/http';
+import type { BinaryUpload, ImageDownload, VideoInference } from '@adapters/ai-agents/http';
 import { createContainer, type Container } from '@infrastructure/di/container';
 import { expoEnvSource, loadEnv, type EnvConfig } from '@infrastructure/config/env';
 
@@ -62,6 +62,52 @@ const downloadImage: ImageDownload = async (url, prompt, headers) => {
   return { status: response.status, dataUrl, body: '' };
 };
 
+/** Busca la URL del video en la respuesta cruda de fal-ai (forma variable según el modelo). */
+function extractVideoUrl(raw: string): string {
+  try {
+    const data = JSON.parse(raw) as Record<string, unknown>;
+    const candidates = [
+      (data.video as { url?: string } | undefined)?.url,
+      data.url,
+      data.output,
+      data.video,
+    ];
+    for (const c of candidates) {
+      if (typeof c === 'string' && c.startsWith('http')) return c;
+    }
+  } catch {
+    /* no era JSON */
+  }
+  const match = raw.match(/https?:\/\/\S+\.(?:mp4|webm|mov)/i);
+  return match ? match[0] : '';
+}
+
+/**
+ * Genera un video vía fal-ai (router HF): POST del prompt → JSON con la URL del .mp4.
+ * La forma exacta de la respuesta varía por modelo; `extractVideoUrl` la tolera. Si el
+ * modelo encola (async), habría que sumar polling — se ajusta al ver la respuesta real.
+ */
+const generateVideo: VideoInference = async (url, request, headers) => {
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt: request.prompt,
+        ...(request.image !== undefined ? { image_url: request.image } : {}),
+      }),
+    });
+  } catch (e) {
+    throw new Error(`POST a [${url}] → ${e instanceof Error ? e.message : String(e)}`);
+  }
+  const raw = await response.text().catch(() => '');
+  if (!response.ok) {
+    return { status: response.status, url: '', body: raw };
+  }
+  return { status: response.status, url: extractVideoUrl(raw), mimeType: 'video/mp4', body: raw };
+};
+
 /**
  * Builds the runtime environment from the Expo defaults and persisted user overrides.
  *
@@ -107,7 +153,7 @@ export default function App() {
     setAppPhase({ phase: 'loading' });
     buildEnv()
       .then((env) => {
-        const container = createContainer(env, AsyncStorage, uploadBinary, downloadImage);
+        const container = createContainer(env, AsyncStorage, uploadBinary, downloadImage, generateVideo);
         setAppPhase({ phase: 'ready', container });
       })
       .catch((error) => {

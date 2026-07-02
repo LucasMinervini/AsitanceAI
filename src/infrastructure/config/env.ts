@@ -7,6 +7,9 @@ import { z } from 'zod';
  */
 export type AiAgentProvider = 'ollama' | 'huggingface' | 'flux' | 'krea' | 'hunyuan';
 
+/** Modelos del nuevo VideoGenerator (por capacidad), enrutados por fal-ai. */
+export type VideoModelId = 'wan' | 'hunyuan' | 'animatediff';
+
 const envSchema = z
   .object({
     AI_AGENT_PROVIDER: z.enum(['ollama', 'huggingface', 'flux', 'krea', 'hunyuan']).default('ollama'),
@@ -27,6 +30,10 @@ const envSchema = z
     // HunyuanVideo-1.5 vía fal-ai provider en HuggingFace router:
     AI_HUNYUAN_BASE_URL: z.string().url().default('https://router.huggingface.co/fal-ai'),
     AI_HUNYUAN_MODEL: z.string().min(1).default('hunyuan-video'),
+    // Nuevo VideoGenerator (por capacidad): todos los modelos van por fal-ai en el router HF.
+    AI_FAL_VIDEO_BASE_URL: z.string().url().default('https://router.huggingface.co/fal-ai'),
+    AI_WAN_MODEL: z.string().min(1).default('Wan-AI/Wan2.1-T2V-1.3B'),
+    AI_ANIMATEDIFF_MODEL: z.string().min(1).default('ByteDance/AnimateDiff-Lightning'),
   })
   .superRefine((data, ctx) => {
     const needsKey = ['huggingface', 'flux', 'hunyuan'] as const;
@@ -56,6 +63,9 @@ export interface EnvConfig {
   readonly videoModel: string;
   readonly hunyuanBaseUrl: string;
   readonly hunyuanModel: string;
+  readonly falVideoBaseUrl: string;
+  readonly wanModel: string;
+  readonly animateDiffModel: string;
 }
 
 export function loadEnv(source: Record<string, string | undefined> = process.env): EnvConfig {
@@ -78,6 +88,9 @@ export function loadEnv(source: Record<string, string | undefined> = process.env
     videoModel: parsed.data.AI_VIDEO_MODEL,
     hunyuanBaseUrl: parsed.data.AI_HUNYUAN_BASE_URL,
     hunyuanModel: parsed.data.AI_HUNYUAN_MODEL,
+    falVideoBaseUrl: parsed.data.AI_FAL_VIDEO_BASE_URL,
+    wanModel: parsed.data.AI_WAN_MODEL,
+    animateDiffModel: parsed.data.AI_ANIMATEDIFF_MODEL,
   };
 }
 
@@ -112,5 +125,11 @@ export function expoEnvSource(): Record<string, string | undefined> {
       process.env.EXPO_PUBLIC_AI_HUNYUAN_BASE_URL ?? 'https://router.huggingface.co/fal-ai',
     AI_HUNYUAN_MODEL:
       process.env.EXPO_PUBLIC_AI_HUNYUAN_MODEL ?? 'hunyuan-video',
+    // Nuevo VideoGenerator (Wan / Hunyuan / AnimateDiff) — todos por fal-ai.
+    AI_FAL_VIDEO_BASE_URL:
+      process.env.EXPO_PUBLIC_AI_FAL_VIDEO_BASE_URL ?? 'https://router.huggingface.co/fal-ai',
+    AI_WAN_MODEL: process.env.EXPO_PUBLIC_AI_WAN_MODEL ?? 'Wan-AI/Wan2.1-T2V-1.3B',
+    AI_ANIMATEDIFF_MODEL:
+      process.env.EXPO_PUBLIC_AI_ANIMATEDIFF_MODEL ?? 'ByteDance/AnimateDiff-Lightning',
   };
 }

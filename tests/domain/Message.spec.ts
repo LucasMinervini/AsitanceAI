@@ -19,4 +19,14 @@ describe('Message', () => {
 
     expect(message.imageUrl).toBe(dataUrl);
   });
+
+  it('conserva el video generado (videoUrl) para mensajes del asistente', () => {
+    const message = Message.create({
+      role: 'assistant',
+      text: '🎬 Video generado',
+      videoUrl: 'https://cdn/out.mp4',
+    });
+
+    expect(message.videoUrl).toBe('https://cdn/out.mp4');
+  });
 });

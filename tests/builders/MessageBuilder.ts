@@ -9,6 +9,7 @@ export class MessageBuilder {
   private role: MessageRole = 'user';
   private text = 'mensaje de prueba';
   private imageUrl: string | undefined = undefined;
+  private videoUrl: string | undefined = undefined;
 
   static aMessage(): MessageBuilder {
     return new MessageBuilder();
@@ -29,7 +30,17 @@ export class MessageBuilder {
     return this;
   }
 
+  withVideo(videoUrl: string): this {
+    this.videoUrl = videoUrl;
+    return this;
+  }
+
   build(): Message {
-    return Message.create({ role: this.role, text: this.text, imageUrl: this.imageUrl });
+    return Message.create({
+      role: this.role,
+      text: this.text,
+      imageUrl: this.imageUrl,
+      videoUrl: this.videoUrl,
+    });
   }
 }

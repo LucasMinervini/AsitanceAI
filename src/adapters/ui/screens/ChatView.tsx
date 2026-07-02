@@ -33,6 +33,9 @@ import { ConversationTabs } from '../components/ConversationTabs';
 import { AnimatedBubble } from '../components/AnimatedBubble';
 import { ChatEmptyState } from '../components/ChatEmptyState';
 import { PressableScale } from '../components/PressableScale';
+import { PopIn } from '../components/PopIn';
+import { TypingDots } from '../components/TypingDots';
+import { VideoBubble } from '../components/VideoBubble';
 import { useAssistant } from '../hooks/useAssistant';
 import { useDependencies } from '../di/DependenciesContext';
 import { colors, font, glow, gradient, radius, spacing } from '../theme/theme';
@@ -41,6 +44,7 @@ import {
   type Attachment,
 } from '../view-models/composeAttachmentMessage';
 import { buildChatRows, type ChatRow } from '../view-models/chatRows';
+import { suggestionsFor } from '../view-models/agentSuggestions';
 import type { ChatViewModel } from '../view-models/ChatViewModel';
 
 interface ChatViewProps {
@@ -123,6 +127,10 @@ export function ChatView({
 }: ChatViewProps) {
   const { messages, status, error, send } = useAssistant(viewModel);
   const { transcribeAudio, agentSelector } = useDependencies();
+  // Proveedor activo en estado local para que las sugerencias y el label de generación
+  // reaccionen al cambiar de agente estando en esta pantalla (el selector lo notifica).
+  const [activeProvider, setActiveProvider] = useState(agentSelector.selected);
+  const activeCategory = metaFor(activeProvider).category;
   const [text, setText] = useState('');
   const [scrollOffset, setScrollOffset] = useState(0);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
@@ -273,11 +281,10 @@ export function ChatView({
   };
 
   // Categoría del agente activo: define el texto de espera (chat vs. imagen vs. video).
-  // Leído en render; al enviar, el provider ya está fijado por el selector.
-  const thinkingLabel = generatingLabel(metaFor(agentSelector.selected).category);
+  const thinkingLabel = generatingLabel(activeCategory);
   const thinking = (
-    <AnimatedBubble style={[styles.bubble, styles.assistantBubble, styles.thinkingBubble]}>
-      <ActivityIndicator size="small" color={colors.primaryBright} />
+    <AnimatedBubble from="left" style={[styles.bubble, styles.assistantBubble, styles.thinkingBubble]}>
+      <TypingDots />
       <Text style={styles.thinkingText}>{thinkingLabel}</Text>
     </AnimatedBubble>
   );
@@ -297,7 +304,7 @@ export function ChatView({
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={headerHeight}
       >
-        <AgentSelector />
+        <AgentSelector onChange={setActiveProvider} />
         <ConversationTabs
           activeId={activeConversationId}
           onSelect={onSelectConversation}
@@ -305,7 +312,7 @@ export function ChatView({
         />
 
         {isEmpty ? (
-          <ChatEmptyState onPick={submit} />
+          <ChatEmptyState onPick={submit} suggestions={suggestionsFor(activeCategory)} />
         ) : (
           <FlatList
             ref={listRef}
@@ -327,6 +334,7 @@ export function ChatView({
               const isUser = message.role === 'user';
               return (
                 <AnimatedBubble
+                  from={isUser ? 'right' : 'left'}
                   style={[
                     styles.bubble,
                     isUser ? styles.userBubble : styles.assistantBubble,
@@ -338,6 +346,7 @@ export function ChatView({
                       <Image source={{ uri: message.imageUrl }} style={styles.bubbleImage} />
                     </Pressable>
                   ) : null}
+                  {message.videoUrl !== undefined ? <VideoBubble uri={message.videoUrl} /> : null}
                   <Text style={styles.bubbleText}>{message.text}</Text>
                   {groupEnd && isUser ? (
                     <Text style={[styles.time, styles.timeOnPrimary]}>{message.time}</Text>
@@ -345,11 +354,11 @@ export function ChatView({
                   {groupEnd && !isUser ? (
                     <View style={styles.meta}>
                       <Text style={styles.time}>{message.time}</Text>
-                      <Pressable hitSlop={6} onPress={() => copy(message.text, index)}>
-                        <Text style={styles.copy}>
+                      <PressableScale hitSlop={6} onPress={() => copy(message.text, index)}>
+                        <Text style={[styles.copy, copiedIndex === index && styles.copyDone]}>
                           {copiedIndex === index ? 'Copiado ✓' : 'Copiar'}
                         </Text>
-                      </Pressable>
+                      </PressableScale>
                     </View>
                   ) : null}
                 </AnimatedBubble>
@@ -360,13 +369,15 @@ export function ChatView({
         )}
 
         {showScrollDown && !isEmpty ? (
-          <Pressable
-            style={[styles.scrollDown, { bottom: Math.max(insets.bottom, spacing.lg) + 58 }]}
-            onPress={() => listRef.current?.scrollToEnd({ animated: true })}
-            accessibilityLabel="Bajar al último mensaje"
-          >
-            <Text style={styles.scrollDownIcon}>↓</Text>
-          </Pressable>
+          <PopIn style={[styles.scrollDownWrap, { bottom: Math.max(insets.bottom, spacing.lg) + 58 }]}>
+            <PressableScale
+              style={styles.scrollDown}
+              onPress={() => listRef.current?.scrollToEnd({ animated: true })}
+              accessibilityLabel="Bajar al último mensaje"
+            >
+              <Text style={styles.scrollDownIcon}>↓</Text>
+            </PressableScale>
+          </PopIn>
         ) : null}
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -530,9 +541,12 @@ const styles = StyleSheet.create({
   time: { fontSize: 11, color: colors.textMuted },
   timeOnPrimary: { color: 'rgba(255,255,255,0.7)', alignSelf: 'flex-end', marginTop: 4 },
   copy: { fontSize: 12, color: colors.cyan, fontWeight: font.semibold },
-  scrollDown: {
+  copyDone: { color: colors.primaryBright },
+  scrollDownWrap: {
     position: 'absolute',
     right: spacing.lg,
+  },
+  scrollDown: {
     width: 40,
     height: 40,
     borderRadius: radius.pill,

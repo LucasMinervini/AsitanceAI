@@ -71,6 +71,28 @@ function conversationRepositoryContract(name: string, makeRepo: () => Conversati
       }
     });
 
+    it('conserva el video generado por el asistente (videoUrl) al guardar y recuperar', async () => {
+      const repo = makeRepo();
+      const id = ConversationId.of('conv-1');
+      const conversation = Conversation.start(id);
+      conversation.addMessage(MessageBuilder.aMessage().withText('un dron volando').build());
+      conversation.addMessage(
+        MessageBuilder.aMessage()
+          .withRole('assistant')
+          .withText('🎬 Video generado')
+          .withVideo('https://cdn.fake/out.mp4')
+          .build(),
+      );
+
+      await repo.save(conversation);
+      const found = await repo.findById(id);
+
+      expect(found.ok).toBe(true);
+      if (found.ok) {
+        expect(found.value?.history[1]?.videoUrl).toBe('https://cdn.fake/out.mp4');
+      }
+    });
+
     it('devuelve null al buscar un id inexistente', async () => {
       const repo = makeRepo();
 
