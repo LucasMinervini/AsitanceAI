@@ -282,7 +282,7 @@ export function ChatView({
   // Categoría del agente activo: define el texto de espera (chat vs. imagen vs. video).
   const thinkingLabel = generatingLabel(activeCategory);
   const thinking = (
-    <AnimatedBubble style={[styles.bubble, styles.assistantBubble, styles.thinkingBubble]}>
+    <AnimatedBubble from="left" style={[styles.bubble, styles.assistantBubble, styles.thinkingBubble]}>
       <TypingDots />
       <Text style={styles.thinkingText}>{thinkingLabel}</Text>
     </AnimatedBubble>
@@ -333,6 +333,7 @@ export function ChatView({
               const isUser = message.role === 'user';
               return (
                 <AnimatedBubble
+                  from={isUser ? 'right' : 'left'}
                   style={[
                     styles.bubble,
                     isUser ? styles.userBubble : styles.assistantBubble,

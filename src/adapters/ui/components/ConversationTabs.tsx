@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { type LayoutChangeEvent, Pressable, ScrollView, StyleSheet, Text } from 'react-native';
 import { useConversationList } from '../hooks/useConversationList';
 import { buildConversationTabs } from '../view-models/conversationTabs';
 import { colors, font, glow, radius, spacing } from '../theme/theme';
@@ -20,10 +20,26 @@ interface ConversationTabsProps {
  */
 export function ConversationTabs({ activeId, onSelect, onNew }: ConversationTabsProps) {
   const { state, viewModel } = useConversationList();
+  const scrollRef = useRef<ScrollView>(null);
+  // Posición (x + ancho) de cada chip, medida con onLayout, para revelar el activo.
+  const layouts = useRef<Record<string, { x: number; width: number }>>({});
 
   useEffect(() => {
     void viewModel.load();
   }, [viewModel, activeId]);
+
+  // Auto-scroll: al cambiar la charla activa (o al cargar la lista), trae su chip a la
+  // vista si quedó fuera. rAF (one-shot) para que el onLayout ya haya medido.
+  useEffect(() => {
+    if (activeId === undefined) return;
+    const raf = requestAnimationFrame(() => {
+      const layout = layouts.current[activeId];
+      if (layout !== undefined) {
+        scrollRef.current?.scrollTo({ x: Math.max(0, layout.x - spacing.md), animated: true });
+      }
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [activeId, state.items.length]);
 
   const tabs = buildConversationTabs(state.items, activeId);
 
@@ -34,6 +50,7 @@ export function ConversationTabs({ activeId, onSelect, onNew }: ConversationTabs
 
   return (
     <ScrollView
+      ref={scrollRef}
       horizontal
       showsHorizontalScrollIndicator={false}
       style={styles.strip}
@@ -44,6 +61,10 @@ export function ConversationTabs({ activeId, onSelect, onNew }: ConversationTabs
         <Pressable
           key={tab.id}
           style={[styles.tab, tab.active && styles.tabActive]}
+          onLayout={(e: LayoutChangeEvent) => {
+            const { x, width } = e.nativeEvent.layout;
+            layouts.current[tab.id] = { x, width };
+          }}
           onPress={() => {
             if (!tab.active) onSelect(tab.id);
           }}

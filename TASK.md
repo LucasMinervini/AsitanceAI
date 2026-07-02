@@ -15,6 +15,8 @@ _(ninguna tarea abierta en este momento)_
 - [x] Pulido UI: fondo unificado (`ScreenBackground` = gradiente + `AiBackdrop`) en Onboarding y Ajustes, para cohesión con el Chat
 - [x] Pulido UI: vida en las burbujas — `TypingDots` (indicador "escribiendo…" con loop acotado) en la burbuja "pensando" + entrada con spring/pop en `AnimatedBubble`
 - [x] Pulido UI: micro-feedbacks — botón "Copiar" con `PressableScale` + color al confirmar (`copyDone`); FAB ↓ entra con `PopIn` (fade+scale one-shot) y `PressableScale` al tocar
+- [x] Pulido UI: feedback al enviar — entrada direccional de burbujas (`AnimatedBubble` prop `from`): mensaje del usuario desde la derecha, respuesta de la IA desde la izquierda (el botón Enviar ya tenía press-scale)
+- [x] Pulido UI: auto-scroll de la tira de conversaciones al chip activo (mide cada chip con `onLayout`, `scrollTo` al cambiar la charla activa / cargar la lista)
 
 ## Pendiente / Backlog
 - [ ] URL correcta para HunyuanVideo via fal-ai (slug desconocido — necesita debug con InferenceClient en Colab con HF_TOKEN)
