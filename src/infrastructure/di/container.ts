@@ -1,12 +1,13 @@
 import { RoutingAssistantAgent } from '@adapters/ai-agents/RoutingAssistantAgent';
+import { RoutingVideoGenerator } from '@adapters/ai-agents/RoutingVideoGenerator';
 import { HuggingFaceTranscriptionAdapter } from '@adapters/ai-agents/HuggingFaceTranscriptionAdapter';
-import type { BinaryUpload, FetchLike, ImageDownload } from '@adapters/ai-agents/http';
+import type { BinaryUpload, FetchLike, ImageDownload, VideoInference } from '@adapters/ai-agents/http';
 import {
   AsyncStorageConversationRepo,
   type KeyValueStorage,
 } from '@adapters/persistence/AsyncStorageConversationRepo';
 import { AsyncStorageSettingsAdapter } from '@adapters/persistence/AsyncStorageSettingsAdapter';
-import type { AgentSelector } from '@adapters/ui/di/DependenciesContext';
+import type { AgentSelector, VideoSelector } from '@adapters/ui/di/DependenciesContext';
 import type { ConversationRepository } from '@application/ports/ConversationRepository';
 import { SendAssistantQuery } from '@application/use-cases/SendAssistantQuery';
 import { ListConversations } from '@application/use-cases/ListConversations';
@@ -14,10 +15,12 @@ import { DeleteConversation } from '@application/use-cases/DeleteConversation';
 import { GetConversation } from '@application/use-cases/GetConversation';
 import { RenameConversation } from '@application/use-cases/RenameConversation';
 import { TranscribeAudio } from '@application/use-cases/TranscribeAudio';
+import { GenerateVideo } from '@application/use-cases/GenerateVideo';
 import { GetSettings } from '@application/use-cases/GetSettings';
 import { SaveSettings } from '@application/use-cases/SaveSettings';
-import type { AiAgentProvider, EnvConfig } from '../config/env';
+import type { AiAgentProvider, EnvConfig, VideoModelId } from '../config/env';
 import { createAssistantAgents } from './createAssistantAgents';
+import { createVideoGenerators } from './createVideoGenerators';
 
 /** Grafo de dependencias ya cableado que el resto de la app (UI) consume. */
 export interface Container {
@@ -27,8 +30,10 @@ export interface Container {
   readonly renameConversation: RenameConversation;
   readonly getConversation: GetConversation;
   readonly transcribeAudio: TranscribeAudio;
+  readonly generateVideo: GenerateVideo;
   readonly conversationRepository: ConversationRepository;
   readonly agentSelector: AgentSelector;
+  readonly videoSelector: VideoSelector;
   readonly hasCompletedOnboarding: () => Promise<boolean>;
   readonly completeOnboarding: () => Promise<void>;
   readonly resetOnboarding: () => Promise<void>;
@@ -53,10 +58,15 @@ export function createContainer(
   storage: KeyValueStorage,
   binaryUpload: BinaryUpload,
   imageDownload: ImageDownload,
+  videoInference: VideoInference,
 ): Container {
   const routingAgent = new RoutingAssistantAgent(
     createAssistantAgents(env, httpFetch, imageDownload),
     env.aiAgentProvider,
+  );
+  const routingVideo = new RoutingVideoGenerator<VideoModelId>(
+    createVideoGenerators(env, videoInference),
+    'wan',
   );
   const transcription = new HuggingFaceTranscriptionAdapter({
     baseUrl: env.sttBaseUrl,
@@ -91,9 +101,21 @@ export function createContainer(
     },
   };
 
+  const videoSelector: VideoSelector = {
+    available: routingVideo.available,
+    get selected() {
+      return routingVideo.selected;
+    },
+    select: (model) => {
+      routingVideo.select(model as VideoModelId);
+    },
+  };
+
   return {
     conversationRepository,
     agentSelector,
+    videoSelector,
+    generateVideo: new GenerateVideo(routingVideo),
     sendAssistantQuery: new SendAssistantQuery(routingAgent, conversationRepository),
     listConversations: new ListConversations(conversationRepository),
     deleteConversation: new DeleteConversation(conversationRepository),

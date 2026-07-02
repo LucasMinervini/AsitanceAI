@@ -5,6 +5,7 @@ import type { DeleteConversation } from '@application/use-cases/DeleteConversati
 import type { RenameConversation } from '@application/use-cases/RenameConversation';
 import type { GetConversation } from '@application/use-cases/GetConversation';
 import type { TranscribeAudio } from '@application/use-cases/TranscribeAudio';
+import type { GenerateVideo } from '@application/use-cases/GenerateVideo';
 import type { GetSettings } from '@application/use-cases/GetSettings';
 import type { SaveSettings } from '@application/use-cases/SaveSettings';
 import type { ChatViewModelRegistry } from '../registry/ChatViewModelRegistry';
@@ -23,6 +24,13 @@ export interface AgentSelector {
   select(provider: string): void;
 }
 
+/** Selector de modelo de video activo (Wan / Hunyuan / AnimateDiff), cambiable en runtime. */
+export interface VideoSelector {
+  readonly available: readonly string[];
+  readonly selected: string;
+  select(model: string): void;
+}
+
 export interface UiDependencies {
   readonly sendAssistantQuery: SendAssistantQuery;
   readonly listConversations: ListConversations;
@@ -30,7 +38,9 @@ export interface UiDependencies {
   readonly renameConversation: RenameConversation;
   readonly getConversation: GetConversation;
   readonly transcribeAudio: TranscribeAudio;
+  readonly generateVideo: GenerateVideo;
   readonly agentSelector: AgentSelector;
+  readonly videoSelector: VideoSelector;
   readonly hasCompletedOnboarding: () => Promise<boolean>;
   readonly completeOnboarding: () => Promise<void>;
   readonly resetOnboarding: () => Promise<void>;

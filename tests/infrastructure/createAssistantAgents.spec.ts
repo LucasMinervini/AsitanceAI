@@ -21,6 +21,9 @@ const env = {
   videoModel: 'generate',
   hunyuanBaseUrl: 'https://router.huggingface.co/fal-ai',
   hunyuanModel: 'hunyuan-video',
+  falVideoBaseUrl: 'https://router.huggingface.co/fal-ai',
+  wanModel: 'Wan-AI/Wan2.1-T2V-1.3B',
+  animateDiffModel: 'ByteDance/AnimateDiff-Lightning',
 } as const;
 
 describe('createAssistantAgents', () => {
