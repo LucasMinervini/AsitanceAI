@@ -61,7 +61,7 @@ export function createContainer(
   videoInference: VideoInference,
 ): Container {
   const routingAgent = new RoutingAssistantAgent(
-    createAssistantAgents(env, httpFetch, imageDownload),
+    createAssistantAgents(env, httpFetch, imageDownload, videoInference),
     env.aiAgentProvider,
   );
   const routingVideo = new RoutingVideoGenerator<VideoModelId>(

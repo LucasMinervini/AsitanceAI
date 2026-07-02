@@ -39,7 +39,8 @@
         {
           "cameraPermission": "Permití el acceso a la cámara para enviar fotos al asistente."
         }
-      ]
+      ],
+      "expo-video"
     ]
   }
 }

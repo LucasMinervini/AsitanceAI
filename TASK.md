@@ -21,7 +21,7 @@ _(ninguna tarea abierta en este momento)_
 - [x] Multimodal — routing + DI de video: `RoutingVideoGenerator` (genérico) + `createVideoGenerators` (record exhaustivo `VideoModelId` = wan/hunyuan/animatediff) + env (`falVideoBaseUrl`/`wanModel`/`animateDiffModel`) + wiring en `container` (`generateVideo` + `videoSelector`) + `VideoInference` runtime en `App.tsx` (POST + `extractVideoUrl`). Falta solo la UI (reproducción con expo-video).
 
 ## Pendiente / Backlog
-- [ ] Multimodal video — UI: reproducción del video generado (instalar `expo-video`), botón/flujo para disparar `generateVideo` desde el chat, selector de modelo de video en la UI. Migrar `HunyuanVideo` legacy (AssistantAgentPort) al Port nuevo. Ajustar `extractVideoUrl`/poll al ver la respuesta real de fal-ai.
+- [ ] Multimodal video — pulido: ajustar `extractVideoUrl`/poll al ver la respuesta real de fal-ai (Krea/Hunyuan van por ese provider; requiere token con Inference Providers + billing); slice TTS (`SpeechSynthesizer`) e Image-to-Text (`ImageAnalyzer`) siguiendo el mismo patrón.
 - [ ] Multimodal — slices TTS (`SpeechSynthesizer`) e Image-to-Text (`ImageAnalyzer`) siguiendo el mismo patrón (port + adapter + contrato + fake).
 - [ ] URL/slug correcto para Krea/HunyuanVideo via fal-ai (confirmar en Colab: `krea/Krea-2-Turbo` va por `router.huggingface.co/fal-ai`; requiere token HF con permiso Inference Providers + billing)
 - [x] Pantalla de ajustes (editar API key + URL de Ollama, persiste en AsyncStorage, reinicia el container)

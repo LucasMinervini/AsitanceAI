@@ -13,6 +13,12 @@ interface MessageProps {
    * sigue siendo obligatorio (la UI pone un prompt por defecto si solo se manda foto).
    */
   readonly imageUrl?: string;
+  /**
+   * Video generado (URL remota o data URL) para mensajes del asistente. A diferencia de
+   * la imagen de visión (transitoria), el video es el entregable y SÍ se persiste — pero
+   * por URL, nunca como base64 (evita inflar el almacenamiento).
+   */
+  readonly videoUrl?: string;
 }
 
 /**
@@ -25,6 +31,7 @@ export class Message {
     public readonly text: string,
     public readonly createdAt: Date,
     public readonly imageUrl?: string,
+    public readonly videoUrl?: string,
   ) {}
 
   static create(props: MessageProps): Message {
@@ -32,6 +39,12 @@ export class Message {
     if (text.length === 0) {
       throw new ValidationError('El texto del mensaje no puede estar vacio.');
     }
-    return new Message(props.role, text, props.createdAt ?? new Date(), props.imageUrl);
+    return new Message(
+      props.role,
+      text,
+      props.createdAt ?? new Date(),
+      props.imageUrl,
+      props.videoUrl,
+    );
   }
 }

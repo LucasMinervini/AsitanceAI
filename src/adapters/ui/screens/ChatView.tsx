@@ -35,6 +35,7 @@ import { ChatEmptyState } from '../components/ChatEmptyState';
 import { PressableScale } from '../components/PressableScale';
 import { PopIn } from '../components/PopIn';
 import { TypingDots } from '../components/TypingDots';
+import { VideoBubble } from '../components/VideoBubble';
 import { useAssistant } from '../hooks/useAssistant';
 import { useDependencies } from '../di/DependenciesContext';
 import { colors, font, glow, gradient, radius, spacing } from '../theme/theme';
@@ -345,6 +346,7 @@ export function ChatView({
                       <Image source={{ uri: message.imageUrl }} style={styles.bubbleImage} />
                     </Pressable>
                   ) : null}
+                  {message.videoUrl !== undefined ? <VideoBubble uri={message.videoUrl} /> : null}
                   <Text style={styles.bubbleText}>{message.text}</Text>
                   {groupEnd && isUser ? (
                     <Text style={[styles.time, styles.timeOnPrimary]}>{message.time}</Text>

@@ -12,6 +12,8 @@ export interface ChatMessageVM {
   readonly createdAtMs: number;
   /** Imagen adjunta (data URL) a mostrar en la burbuja, si el mensaje la lleva. */
   readonly imageUrl?: string;
+  /** Video generado (URL) a reproducir en la burbuja, si el mensaje lo lleva. */
+  readonly videoUrl?: string;
 }
 
 function formatTime(date: Date): string {
@@ -103,6 +105,7 @@ export class ChatViewModel {
       time: formatTime(message.createdAt),
       createdAtMs: message.createdAt.getTime(),
       imageUrl: message.imageUrl,
+      videoUrl: message.videoUrl,
     }));
   }
 

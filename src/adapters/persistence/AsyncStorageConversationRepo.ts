@@ -32,6 +32,8 @@ const PersistedConversation = z.object({
       // Solo se guarda para mensajes del asistente (imagen generada = entregable).
       // La imagen que sube el usuario (vision) es transitoria y no se persiste.
       imageUrl: z.string().optional(),
+      // Video generado (entregable): se persiste por URL, no base64.
+      videoUrl: z.string().optional(),
     }),
   ),
 });
@@ -57,6 +59,8 @@ export class AsyncStorageConversationRepo implements ConversationRepository {
         createdAt: message.createdAt.toISOString(),
         // Persistir la imagen solo si la generó el asistente; descartar las de vision.
         imageUrl: message.role === 'assistant' ? message.imageUrl : undefined,
+        // El video generado siempre es del asistente y es una URL: se persiste.
+        videoUrl: message.videoUrl,
       })),
     };
 
@@ -143,6 +147,7 @@ export class AsyncStorageConversationRepo implements ConversationRepository {
           text: message.text,
           createdAt: message.createdAt !== undefined ? new Date(message.createdAt) : undefined,
           imageUrl: message.imageUrl,
+          videoUrl: message.videoUrl,
         }),
       );
     }
