@@ -48,3 +48,33 @@ export type ImageDownload = (
   prompt: string,
   headers: Record<string, string>,
 ) => Promise<ImageDownloadResult>;
+
+/** Pedido crudo de generación de video que recibe el transporte. */
+export interface VideoInferenceRequest {
+  readonly prompt: string;
+  readonly image?: string; // data URL, para image-to-video
+  readonly durationSeconds?: number;
+  readonly seed?: number;
+}
+
+/** Resultado de generar un video: status + URL del .mp4 (o '' si falló) + cuerpo crudo. */
+export interface VideoInferenceResult {
+  readonly status: number;
+  readonly url: string;
+  readonly mimeType?: string;
+  readonly durationSeconds?: number;
+  /** Cuerpo crudo de la respuesta cuando el status no es 2xx (para diagnóstico). */
+  readonly body: string;
+}
+
+/**
+ * Genera un video (POST del prompt → normalmente encolar + poll en fal-ai → URL del
+ * .mp4). La generación de video es asíncrona y frágil sobre `fetch` directo, así que el
+ * adaptador delega el transporte en esta función inyectable: la impl de runtime vive en
+ * `App.tsx`, los tests pasan un fake — manteniendo el adapter testeable en Node sin red.
+ */
+export type VideoInference = (
+  url: string,
+  request: VideoInferenceRequest,
+  headers: Record<string, string>,
+) => Promise<VideoInferenceResult>;

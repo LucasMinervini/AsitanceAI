@@ -17,9 +17,12 @@ _(ninguna tarea abierta en este momento)_
 - [x] Pulido UI: micro-feedbacks — botón "Copiar" con `PressableScale` + color al confirmar (`copyDone`); FAB ↓ entra con `PopIn` (fade+scale one-shot) y `PressableScale` al tocar
 - [x] Pulido UI: feedback al enviar — entrada direccional de burbujas (`AnimatedBubble` prop `from`): mensaje del usuario desde la derecha, respuesta de la IA desde la izquierda (el botón Enviar ya tenía press-scale)
 - [x] Pulido UI: auto-scroll de la tira de conversaciones al chip activo (mide cada chip con `onLayout`, `scrollTo` al cambiar la charla activa / cargar la lista)
+- [x] Multimodal — slice de video (core, sin UI/DI): `VideoGenerator` port + `GeneratedVideo`/`VideoRequest`/`ImageInput` + `VideoUnavailableError` + transporte `VideoInference` + `WanVideoAdapter` (fal-ai) + contrato `VideoGeneratorPort.contract.ts` + use-case `GenerateVideo` + `FakeVideoGenerator` + `GeneratedVideoBuilder`. `INITIAL.md` con la spec multimodal completa (TTS/Image-to-Text en slices siguientes).
 
 ## Pendiente / Backlog
-- [ ] URL correcta para HunyuanVideo via fal-ai (slug desconocido — necesita debug con InferenceClient en Colab con HF_TOKEN)
+- [ ] Multimodal video — próximos slices: `RoutingVideoGenerator` + `createVideoGenerators` (record exhaustivo) + env por provider (fal-ai) + `VideoInference` runtime (App.tsx, poll async) + DI wiring + UI (reproducción con `expo-video`). Migrar `HunyuanVideo` al Port nuevo.
+- [ ] Multimodal — slices TTS (`SpeechSynthesizer`) e Image-to-Text (`ImageAnalyzer`) siguiendo el mismo patrón (port + adapter + contrato + fake).
+- [ ] URL/slug correcto para Krea/HunyuanVideo via fal-ai (confirmar en Colab: `krea/Krea-2-Turbo` va por `router.huggingface.co/fal-ai`; requiere token HF con permiso Inference Providers + billing)
 - [x] Pantalla de ajustes (editar API key + URL de Ollama, persiste en AsyncStorage, reinicia el container)
 - [x] Búsqueda en historial del drawer (filtrar conversaciones por texto)
 - [x] Soporte multi-conversación: selector rápido (Fase A). Falta Fase B (concurrencia en vivo con registry de ChatViewModels) — opcional
