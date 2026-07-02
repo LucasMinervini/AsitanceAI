@@ -33,6 +33,7 @@ import { ConversationTabs } from '../components/ConversationTabs';
 import { AnimatedBubble } from '../components/AnimatedBubble';
 import { ChatEmptyState } from '../components/ChatEmptyState';
 import { PressableScale } from '../components/PressableScale';
+import { PopIn } from '../components/PopIn';
 import { TypingDots } from '../components/TypingDots';
 import { useAssistant } from '../hooks/useAssistant';
 import { useDependencies } from '../di/DependenciesContext';
@@ -350,11 +351,11 @@ export function ChatView({
                   {groupEnd && !isUser ? (
                     <View style={styles.meta}>
                       <Text style={styles.time}>{message.time}</Text>
-                      <Pressable hitSlop={6} onPress={() => copy(message.text, index)}>
-                        <Text style={styles.copy}>
+                      <PressableScale hitSlop={6} onPress={() => copy(message.text, index)}>
+                        <Text style={[styles.copy, copiedIndex === index && styles.copyDone]}>
                           {copiedIndex === index ? 'Copiado ✓' : 'Copiar'}
                         </Text>
-                      </Pressable>
+                      </PressableScale>
                     </View>
                   ) : null}
                 </AnimatedBubble>
@@ -365,13 +366,15 @@ export function ChatView({
         )}
 
         {showScrollDown && !isEmpty ? (
-          <Pressable
-            style={[styles.scrollDown, { bottom: Math.max(insets.bottom, spacing.lg) + 58 }]}
-            onPress={() => listRef.current?.scrollToEnd({ animated: true })}
-            accessibilityLabel="Bajar al último mensaje"
-          >
-            <Text style={styles.scrollDownIcon}>↓</Text>
-          </Pressable>
+          <PopIn style={[styles.scrollDownWrap, { bottom: Math.max(insets.bottom, spacing.lg) + 58 }]}>
+            <PressableScale
+              style={styles.scrollDown}
+              onPress={() => listRef.current?.scrollToEnd({ animated: true })}
+              accessibilityLabel="Bajar al último mensaje"
+            >
+              <Text style={styles.scrollDownIcon}>↓</Text>
+            </PressableScale>
+          </PopIn>
         ) : null}
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -535,9 +538,12 @@ const styles = StyleSheet.create({
   time: { fontSize: 11, color: colors.textMuted },
   timeOnPrimary: { color: 'rgba(255,255,255,0.7)', alignSelf: 'flex-end', marginTop: 4 },
   copy: { fontSize: 12, color: colors.cyan, fontWeight: font.semibold },
-  scrollDown: {
+  copyDone: { color: colors.primaryBright },
+  scrollDownWrap: {
     position: 'absolute',
     right: spacing.lg,
+  },
+  scrollDown: {
     width: 40,
     height: 40,
     borderRadius: radius.pill,
