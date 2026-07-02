@@ -17,18 +17,24 @@ export function AnimatedBubble({ children, style }: AnimatedBubbleProps) {
   const enter = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.timing(enter, {
+    // Spring one-shot: leve overshoot → un "pop" sutil al entrar (más vivo que un timing
+    // lineal). Corre una vez y para; no deja loop de rAF.
+    Animated.spring(enter, {
       toValue: 1,
-      duration: 240,
+      friction: 6,
+      tension: 90,
       useNativeDriver: false,
     }).start();
   }, [enter]);
 
+  // El spring puede pasar levemente de 1: el rango extra da el overshoot del scale (pop)
+  // y clampea la opacidad para que no parpadee por encima de 1.
+  const opacity = enter.interpolate({ inputRange: [0, 1], outputRange: [0, 1], extrapolate: 'clamp' });
   const translateY = enter.interpolate({ inputRange: [0, 1], outputRange: [10, 0] });
-  const scale = enter.interpolate({ inputRange: [0, 1], outputRange: [0.96, 1] });
+  const scale = enter.interpolate({ inputRange: [0, 1, 1.15], outputRange: [0.94, 1.0, 1.03] });
 
   return (
-    <Animated.View style={[style, { opacity: enter, transform: [{ translateY }, { scale }] }]}>
+    <Animated.View style={[style, { opacity, transform: [{ translateY }, { scale }] }]}>
       {children}
     </Animated.View>
   );

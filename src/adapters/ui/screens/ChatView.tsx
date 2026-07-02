@@ -33,6 +33,7 @@ import { ConversationTabs } from '../components/ConversationTabs';
 import { AnimatedBubble } from '../components/AnimatedBubble';
 import { ChatEmptyState } from '../components/ChatEmptyState';
 import { PressableScale } from '../components/PressableScale';
+import { TypingDots } from '../components/TypingDots';
 import { useAssistant } from '../hooks/useAssistant';
 import { useDependencies } from '../di/DependenciesContext';
 import { colors, font, glow, gradient, radius, spacing } from '../theme/theme';
@@ -281,7 +282,7 @@ export function ChatView({
   const thinkingLabel = generatingLabel(activeCategory);
   const thinking = (
     <AnimatedBubble style={[styles.bubble, styles.assistantBubble, styles.thinkingBubble]}>
-      <ActivityIndicator size="small" color={colors.primaryBright} />
+      <TypingDots />
       <Text style={styles.thinkingText}>{thinkingLabel}</Text>
     </AnimatedBubble>
   );

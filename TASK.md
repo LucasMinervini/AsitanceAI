@@ -13,6 +13,7 @@ _(ninguna tarea abierta en este momento)_
 - [x] Multi-conversación Fase B: `ChatViewModelRegistry` (VMs vivos por id, estado en vivo al volver; envíos en segundo plano siguen) + wire en DI/`useChatViewModel` + evict al borrar
 - [x] Pulido UI: sugerencias del empty state adaptadas a la categoría del agente activo (`suggestionsFor`: imagen/video/chat) + `AgentSelector.onChange` → `ChatView` reacciona en vivo al cambiar de agente
 - [x] Pulido UI: fondo unificado (`ScreenBackground` = gradiente + `AiBackdrop`) en Onboarding y Ajustes, para cohesión con el Chat
+- [x] Pulido UI: vida en las burbujas — `TypingDots` (indicador "escribiendo…" con loop acotado) en la burbuja "pensando" + entrada con spring/pop en `AnimatedBubble`
 
 ## Pendiente / Backlog
 - [ ] URL correcta para HunyuanVideo via fal-ai (slug desconocido — necesita debug con InferenceClient en Colab con HF_TOKEN)
